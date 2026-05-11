@@ -47,6 +47,10 @@ class Router {
         [$class, $method] = explode('@', $handler);
         $fqcn = "App\\Controllers\\{$class}";
         $controller = new $fqcn($this->app);
+        $params = array_map(
+            fn($v) => ctype_digit($v) ? (int)$v : $v,
+            $params
+        );
         $controller->$method(...array_values($params));
     }
 }
