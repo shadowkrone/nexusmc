@@ -33,7 +33,7 @@ class Database {
     }
 
     public function insert(string $table, array $data): int {
-        $cols   = implode(', ', array_keys($data));
+        $cols   = implode(', ', array_map(fn($k) => "`{$k}`", array_keys($data)));
         $places = implode(', ', array_fill(0, count($data), '?'));
         $this->query("INSERT INTO `{$table}` ({$cols}) VALUES ({$places})", array_values($data));
         return (int) $this->pdo->lastInsertId();
