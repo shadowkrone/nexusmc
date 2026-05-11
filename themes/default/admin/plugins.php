@@ -23,25 +23,18 @@
       </div>
       <div class="flex-1 min-w-0">
         <p class="font-semibold text-white"><?= e($info['name'] ?? $name) ?></p>
-        <p class="text-xs text-slate-400 mt-0.5"><?= e($info['description'] ?? '') ?> <?php if($v = $info['version'] ?? null): ?> · v<?= e($v) ?><?php endif; ?></p>
+        <p class="text-xs text-slate-400 mt-0.5"><?= e($info['description'] ?? '') ?><?php if($v = $info['version'] ?? null): ?> · v<?= e($v) ?><?php endif; ?></p>
       </div>
-      <label class="relative inline-flex items-center cursor-pointer">
-        <input type="checkbox" class="sr-only peer" <?= $info['enabled'] ? 'checked' : '' ?>
-               onchange="togglePlugin('<?= e($name) ?>', this.checked)">
-        <div class="w-11 h-6 bg-slate-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand"></div>
-      </label>
+      <form method="POST" action="<?= url('admin/plugins/' . e($name) . '/toggle') ?>">
+        <?= csrf_field() ?>
+        <button type="submit"
+                class="relative inline-flex items-center cursor-pointer focus:outline-none group">
+          <span class="w-11 h-6 rounded-full transition-colors <?= $info['enabled'] ? 'bg-brand' : 'bg-slate-700' ?>"></span>
+          <span class="absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform <?= $info['enabled'] ? 'translate-x-5' : 'translate-x-0' ?>"></span>
+        </button>
+      </form>
     </div>
     <?php endforeach; ?>
   </div>
   <?php endif; ?>
 </div>
-
-<script>
-async function togglePlugin(name, enabled) {
-  await fetch(`<?= url('admin/plugins') ?>/${name}/toggle`, {
-    method: 'POST',
-    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-    body: `_csrf=<?= csrf() ?>`
-  });
-}
-</script>

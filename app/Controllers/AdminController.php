@@ -254,13 +254,18 @@ class AdminController extends Controller {
 
     public function togglePlugin(string $name): void {
         $this->requireAdmin();
+        if (!csrf_verify()) { flash('error', 'Ugyldig forespørgsel.'); redirect('admin/plugins'); }
+
         $enabled = app()->plugins->getEnabled();
         if (in_array($name, $enabled)) {
             $enabled = array_values(array_diff($enabled, [$name]));
+            $msg = "Plugin '{$name}' deaktiveret.";
         } else {
             $enabled[] = $name;
+            $msg = "Plugin '{$name}' aktiveret.";
         }
         Setting::set('enabled_plugins', json_encode($enabled));
-        $this->json(['ok' => true, 'enabled' => in_array($name, $enabled)]);
+        flash('success', $msg);
+        redirect('admin/plugins');
     }
 }
