@@ -37,7 +37,7 @@ class ForumController extends Controller {
         $pages = (int)ceil($total / 15);
 
         $category = ForumCategory::find($thread['category_id']);
-        $this->render('forum/thread', compact('thread', 'posts', 'page', 'pages', 'category'));
+        $this->render('forum/thread', compact('thread', 'posts', 'page', 'pages', 'total', 'category'));
     }
 
     public function newThread(int $categoryId): void {
