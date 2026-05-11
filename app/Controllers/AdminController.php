@@ -72,6 +72,75 @@ class AdminController extends Controller {
         $this->json(['ok' => true, 'role' => $role]);
     }
 
+    public function getUser(int $id): void {
+        $this->requireAdmin();
+        $user = User::find($id);
+        if (!$user) { $this->json(['error' => 'Bruger ikke fundet'], 404); }
+        // Never expose password hash
+        unset($user['password']);
+        $this->json(['ok' => true, 'user' => $user]);
+    }
+
+    public function updateUser(int $id): void {
+        $this->requireAdmin();
+        if (!csrf_verify()) { $this->json(['error' => 'Ugyldig forespørgsel.'], 403); }
+
+        $user = User::find($id);
+        if (!$user) { $this->json(['error' => 'Bruger ikke fundet.'], 404); }
+
+        $data     = [];
+        $errors   = [];
+
+        $username = trim($_POST['username'] ?? '');
+        $email    = trim($_POST['email'] ?? '');
+        $password = $_POST['password'] ?? '';
+
+        // Validate username
+        if ($username && $username !== $user['username']) {
+            if (strlen($username) < 3 || strlen($username) > 30) {
+                $errors[] = 'Brugernavn skal være 3–30 tegn.';
+            } elseif (preg_match('/[^a-zA-Z0-9_\-]/', $username)) {
+                $errors[] = 'Brugernavn må kun indeholde bogstaver, tal, _ og -.';
+            } else {
+                $taken = db()->fetch('SELECT id FROM ' . DB_PREFIX . 'users WHERE username = ? AND id != ?', [$username, $id]);
+                if ($taken) $errors[] = 'Brugernavnet er allerede i brug.';
+                else $data['username'] = $username;
+            }
+        }
+
+        // Validate email
+        if ($email && $email !== $user['email']) {
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $errors[] = 'Ugyldig email-adresse.';
+            } else {
+                $taken = db()->fetch('SELECT id FROM ' . DB_PREFIX . 'users WHERE email = ? AND id != ?', [strtolower($email), $id]);
+                if ($taken) $errors[] = 'Email er allerede i brug.';
+                else $data['email'] = strtolower($email);
+            }
+        }
+
+        // Password (optional)
+        if ($password !== '') {
+            if (strlen($password) < 8) {
+                $errors[] = 'Adgangskode skal mindst være 8 tegn.';
+            } else {
+                $data['password'] = password_hash($password, PASSWORD_BCRYPT);
+            }
+        }
+
+        if (!empty($errors)) {
+            $this->json(['ok' => false, 'errors' => $errors]);
+        }
+
+        if (!empty($data)) {
+            User::update($data, $id);
+        }
+
+        $updated = User::find($id);
+        unset($updated['password']);
+        $this->json(['ok' => true, 'user' => $updated]);
+    }
+
     public function forum(): void {
         $this->requireAdmin();
         $categories = ForumCategory::all();

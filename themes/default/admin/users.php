@@ -1,8 +1,130 @@
 <?php
 function isOnline(string $lastSeen): bool {
-    return strtotime($lastSeen) > time() - 900; // 15 min
+    return strtotime($lastSeen) > time() - 900;
 }
 ?>
+
+<!-- Edit User Modal -->
+<div x-data="editModal()" @open-edit.window="open($event.detail)">
+  <div x-show="show" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" @click="close()"></div>
+
+    <!-- Modal -->
+    <div class="relative glass rounded-2xl w-full max-w-md shadow-2xl" x-transition>
+      <!-- Header -->
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-800">
+        <div class="flex items-center gap-3">
+          <img :src="`https://mc-heads.net/avatar/${currentUsername}/32`" class="w-8 h-8 rounded-lg" alt="">
+          <div>
+            <h3 class="font-semibold text-white">Rediger bruger</h3>
+            <p class="text-xs text-slate-500" x-text="'#' + userId"></p>
+          </div>
+        </div>
+        <button @click="close()" class="text-slate-500 hover:text-white transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Loading -->
+      <div x-show="loading" class="flex items-center justify-center py-12">
+        <svg class="w-6 h-6 text-brand animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+      </div>
+
+      <!-- Form -->
+      <form x-show="!loading" @submit.prevent="save()" class="p-6 space-y-4">
+        <!-- Errors -->
+        <div x-show="errors.length > 0" class="bg-red-500/10 border border-red-500/20 rounded-xl p-3 space-y-1">
+          <template x-for="err in errors" :key="err">
+            <p class="text-sm text-red-400 flex items-center gap-1.5">
+              <span class="text-red-500">✕</span>
+              <span x-text="err"></span>
+            </p>
+          </template>
+        </div>
+
+        <!-- Success -->
+        <div x-show="successMsg" x-cloak class="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3 flex items-center gap-2 text-emerald-400 text-sm">
+          <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          <span x-text="successMsg"></span>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-slate-300 mb-1.5">Brugernavn</label>
+          <div class="relative">
+            <input type="text" x-model="form.username" minlength="3" maxlength="30"
+                   class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 pr-10 text-white placeholder-slate-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/30 transition-colors">
+            <img :src="`https://mc-heads.net/avatar/${form.username}/20`" class="absolute right-3 top-2.5 w-5 h-5 rounded" alt="">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-slate-300 mb-1.5">Email</label>
+          <input type="email" x-model="form.email"
+                 class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/30 transition-colors">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-slate-300 mb-1.5">
+            Ny adgangskode
+            <span class="text-slate-600 font-normal">(lad stå tom for ingen ændring)</span>
+          </label>
+          <div class="relative" x-data="{showPw: false}">
+            <input :type="showPw ? 'text' : 'password'" x-model="form.password" minlength="8"
+                   class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 pr-10 text-white placeholder-slate-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/30 transition-colors"
+                   placeholder="Min. 8 tegn">
+            <button type="button" @click="showPw = !showPw" class="absolute right-3 top-2.5 text-slate-500 hover:text-slate-300">
+              <svg x-show="!showPw" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg x-show="showPw" x-cloak class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-slate-300 mb-1.5">Rolle</label>
+          <select x-model="form.role"
+                  class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/30 transition-colors">
+            <option value="member">Medlem</option>
+            <option value="moderator">Moderator</option>
+            <option value="admin">Administrator</option>
+          </select>
+        </div>
+
+        <!-- Extra info (read-only) -->
+        <div class="grid grid-cols-2 gap-3 pt-2 border-t border-slate-800">
+          <div class="bg-slate-900/50 rounded-lg px-3 py-2">
+            <p class="text-xs text-slate-500 mb-0.5">Oprettet</p>
+            <p class="text-sm text-slate-300" x-text="joinDate"></p>
+          </div>
+          <div class="bg-slate-900/50 rounded-lg px-3 py-2">
+            <p class="text-xs text-slate-500 mb-0.5">Sidst set</p>
+            <p class="text-sm text-slate-300" x-text="lastSeen"></p>
+          </div>
+          <div class="bg-slate-900/50 rounded-lg px-3 py-2">
+            <p class="text-xs text-slate-500 mb-0.5">Indlæg</p>
+            <p class="text-sm font-semibold text-white" x-text="postCount"></p>
+          </div>
+          <div class="bg-slate-900/50 rounded-lg px-3 py-2">
+            <p class="text-xs text-slate-500 mb-0.5">Status</p>
+            <p class="text-sm font-semibold" :class="banned ? 'text-red-400' : 'text-emerald-400'" x-text="banned ? 'Banned' : 'Aktiv'"></p>
+          </div>
+        </div>
+
+        <div class="flex gap-3 pt-2">
+          <button type="button" @click="close()"
+                  class="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg transition-colors">
+            Annuller
+          </button>
+          <button type="submit" :disabled="saving"
+                  class="flex-1 py-2.5 bg-brand hover:bg-brand-dark text-white font-semibold rounded-lg transition-colors disabled:opacity-60 flex items-center justify-center gap-2">
+            <svg x-show="saving" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+            <span x-text="saving ? 'Gemmer…' : 'Gem ændringer'"></span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 <div class="max-w-7xl">
   <!-- Header -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-7">
@@ -79,7 +201,7 @@ function isOnline(string $lastSeen): bool {
         <!-- Main info -->
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-2 flex-wrap">
-            <span class="font-semibold text-white"><?= e($u['username']) ?></span>
+            <span class="font-semibold text-white user-name-text"><?= e($u['username']) ?></span>
             <span class="user-role-badge-<?= $u['id'] ?> text-xs px-2 py-0.5 rounded-full <?= \App\Models\User::roleBadgeClass($u['role']) ?>">
               <?= \App\Models\User::roleLabel($u['role']) ?>
             </span>
@@ -119,6 +241,12 @@ function isOnline(string $lastSeen): bool {
              title="Se profil">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
           </a>
+
+          <button @click="$dispatch('open-edit', <?= htmlspecialchars(json_encode(['id' => $u['id']]), ENT_QUOTES) ?>)"
+                  class="p-2 text-slate-500 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-lg transition-colors"
+                  title="Rediger bruger">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+          </button>
 
           <?php if($u['id'] !== auth()->user()['id']): ?>
 
@@ -182,6 +310,91 @@ function isOnline(string $lastSeen): bool {
 
 <script>
 const csrf = '<?= csrf() ?>';
+
+function editModal() {
+  return {
+    show:           false,
+    loading:        false,
+    saving:         false,
+    userId:         null,
+    currentUsername:'',
+    joinDate:       '',
+    lastSeen:       '',
+    postCount:      0,
+    banned:         false,
+    errors:         [],
+    successMsg:     '',
+    form: { username: '', email: '', password: '', role: 'member' },
+
+    async open(detail) {
+      this.show       = true;
+      this.loading    = true;
+      this.errors     = [];
+      this.successMsg = '';
+      this.userId     = detail.id;
+      this.form.password = '';
+
+      const res  = await fetch(`<?= url('admin/users') ?>/${detail.id}/get`);
+      const data = await res.json();
+
+      this.loading = false;
+      if (!data.ok) { this.errors = [data.error]; return; }
+
+      const u = data.user;
+      this.form.username    = u.username;
+      this.form.email       = u.email;
+      this.form.role        = u.role;
+      this.currentUsername  = u.username;
+      this.banned           = !!u.banned;
+      this.joinDate         = u.created_at ? new Date(u.created_at).toLocaleDateString('da-DK') : '—';
+      this.lastSeen         = u.last_seen  ? new Date(u.last_seen).toLocaleDateString('da-DK')  : '—';
+      this.postCount        = u.post_count ?? '—';
+    },
+
+    close() {
+      this.show = false;
+      this.successMsg = '';
+    },
+
+    async save() {
+      this.saving    = true;
+      this.errors    = [];
+      this.successMsg = '';
+
+      const body = new URLSearchParams({
+        username: this.form.username,
+        email:    this.form.email,
+        password: this.form.password,
+        role:     this.form.role,
+        _csrf:    csrf,
+      });
+
+      const res  = await fetch(`<?= url('admin/users') ?>/${this.userId}/update`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body,
+      });
+      const data = await res.json();
+      this.saving = false;
+
+      if (!data.ok) {
+        this.errors = data.errors ?? [data.error ?? 'Ukendt fejl.'];
+        return;
+      }
+
+      this.currentUsername = data.user.username;
+      this.form.password   = '';
+      this.successMsg      = 'Ændringer gemt!';
+
+      // Update the row in the table
+      const row = document.getElementById(`user-row-${this.userId}`);
+      if (row) {
+        row.querySelector('img').src = `https://mc-heads.net/avatar/${data.user.username}/40`;
+        row.querySelector('.user-name-text').textContent = data.user.username;
+      }
+    }
+  }
+}
 
 async function setBan(id, banned) {
   const btn = event.currentTarget;

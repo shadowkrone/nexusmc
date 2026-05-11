@@ -52,8 +52,10 @@ class Application {
         // Admin
         $r->get('/admin',                  'AdminController@dashboard');
         $r->get('/admin/users',            'AdminController@users');
-        $r->post('/admin/users/{id}/ban',  'AdminController@banUser');
-        $r->post('/admin/users/{id}/role', 'AdminController@changeRole');
+        $r->post('/admin/users/{id}/ban',    'AdminController@banUser');
+        $r->post('/admin/users/{id}/role',   'AdminController@changeRole');
+        $r->get('/admin/users/{id}/get',     'AdminController@getUser');
+        $r->post('/admin/users/{id}/update', 'AdminController@updateUser');
         $r->get('/admin/forum',            'AdminController@forum');
         $r->post('/admin/forum/category',  'AdminController@createCategory');
         $r->post('/admin/forum/category/{id}/delete', 'AdminController@deleteCategory');
