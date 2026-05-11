@@ -75,18 +75,6 @@
       </div>
     </div>
 
-    <!-- GitHub / Updates -->
-    <div class="glass rounded-2xl p-6 space-y-5">
-      <h2 class="font-semibold text-white border-b border-slate-800 pb-3">Auto-opdatering</h2>
-      <div>
-        <label class="block text-sm font-medium text-slate-300 mb-1.5">GitHub repo</label>
-        <input type="text" name="github_repo" value="<?= e($settings['github_repo'] ?? '') ?>"
-               class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/30 transition-colors"
-               placeholder="dit-brugernavn/nexusmc">
-        <p class="text-xs text-slate-600 mt-1">Format: <code class="bg-slate-800 px-1 rounded">brugernavn/repo-navn</code> fra GitHub.</p>
-      </div>
-    </div>
-
     <div class="flex justify-end">
       <button type="submit" class="px-7 py-3 bg-brand hover:bg-brand-dark text-white font-semibold rounded-xl transition-colors shadow-lg shadow-brand/20">
         Gem indstillinger

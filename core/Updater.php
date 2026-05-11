@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace Core;
 
 class Updater {
+    public const REPO = 'shadowkrone/nexusmc';
+
     // Paths that are NEVER overwritten during update
     private const PROTECTED = [
         'config/config.php',

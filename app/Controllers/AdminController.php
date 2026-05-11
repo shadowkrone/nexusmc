@@ -193,7 +193,7 @@ class AdminController extends Controller {
         $allowed = [
             'site_name', 'site_description', 'site_logo', 'site_banner',
             'server_ip', 'server_port', 'discord_url', 'store_url',
-            'maintenance_mode', 'registration_open', 'theme', 'github_repo',
+            'maintenance_mode', 'registration_open', 'theme',
         ];
         foreach ($allowed as $key) {
             if (isset($_POST[$key])) {
@@ -207,20 +207,15 @@ class AdminController extends Controller {
 
     public function updates(): void {
         $this->requireAdmin();
-        $repo    = setting('github_repo', '');
-        $updater = new \Core\Updater();
+        $updater  = new \Core\Updater();
         $canWrite = $updater->canWriteFiles();
-        $this->renderAdmin('updates', compact('repo', 'canWrite'));
+        $this->renderAdmin('updates', compact('canWrite'));
     }
 
     public function checkUpdate(): void {
         $this->requireAdmin();
-        $repo = setting('github_repo', '');
-        if (!$repo) {
-            $this->json(['ok' => false, 'message' => 'Intet GitHub-repo konfigureret under Indstillinger.']);
-        }
         $updater = new \Core\Updater();
-        $release = $updater->getLatestRelease($repo);
+        $release = $updater->getLatestRelease(\Core\Updater::REPO);
         if (!$release) {
             $this->json(['ok' => false, 'message' => 'Kunne ikke hente release-info fra GitHub. Tjek at repo-navnet er korrekt.']);
         }
