@@ -1,0 +1,2 @@
+# Allow direct access to the installer
+Options -Indexes

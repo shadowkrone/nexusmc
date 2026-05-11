@@ -1,0 +1,24 @@
+# NexusMC — Git ignore
+
+# User config (contains database credentials)
+config/config.php
+
+# Backups
+storage/backups/*
+!storage/backups/.gitkeep
+!storage/backups/.htaccess
+
+# Vendor (if composer is used)
+vendor/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Logs
+*.log
