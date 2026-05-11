@@ -45,9 +45,12 @@ class Application {
         $r->post('/forum/post/{id}/react',       'ForumController@reactPost');
 
         // Profile
-        $r->get('/user/{username}',   'ProfileController@show');
-        $r->get('/settings',          'ProfileController@settings');
-        $r->post('/settings',         'ProfileController@saveSettings');
+        $r->get('/user/{username}',          'ProfileController@show');
+        $r->get('/settings',                 'ProfileController@settings');
+        $r->post('/settings/username',       'ProfileController@saveUsername');
+        $r->post('/settings/email',          'ProfileController@saveEmail');
+        $r->post('/settings/password',       'ProfileController@savePassword');
+        $r->post('/settings/delete-account', 'ProfileController@deleteAccount');
 
         // Admin
         $r->get('/admin',                  'AdminController@dashboard');
