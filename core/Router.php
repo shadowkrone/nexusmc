@@ -45,7 +45,7 @@ class Router {
 
     private function call(string $handler, array $params): void {
         [$class, $method] = explode('@', $handler);
-        $fqcn = "App\\Controllers\\{$class}";
+        $fqcn = str_contains($class, '\\') ? $class : "App\\Controllers\\{$class}";
         $controller = new $fqcn($this->app);
         $params = array_map(
             fn($v) => ctype_digit($v) ? (int)$v : $v,

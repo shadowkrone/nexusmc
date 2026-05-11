@@ -59,6 +59,7 @@ tailwind.config = {
         <?= $l['label'] ?>
       </a>
       <?php endforeach; ?>
+      <?= app()->plugins->fire('admin_nav_html', '') ?>
     </nav>
 
     <div class="px-3 pb-4 border-t border-slate-800/50 pt-3">
