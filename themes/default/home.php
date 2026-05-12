@@ -1,4 +1,12 @@
-<?php $pageTitle = t('nav.home'); ?>
+<?php
+$pageTitle  = t('nav.home');
+$heroTitle  = setting('home_hero_title', '');
+$heroSub    = setting('home_hero_subtitle', '');
+$showServer = setting('home_show_server', '1') === '1';
+$showThreads = setting('home_show_threads', '1') === '1';
+$showActivity = setting('home_show_activity', '1') === '1';
+$showJoinCta = setting('home_show_join_cta', '1') === '1';
+?>
 
 <!-- HERO -->
 <section class="relative overflow-hidden">
@@ -6,7 +14,7 @@
   <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-brand/5 rounded-full blur-3xl pointer-events-none"></div>
 
   <div class="relative max-w-7xl mx-auto px-4 sm:px-6 pt-20 pb-16">
-    <div class="grid lg:grid-cols-2 gap-12 items-center">
+    <div class="grid <?= $showServer ? 'lg:grid-cols-2' : 'lg:grid-cols-1 max-w-2xl' ?> gap-12 items-center">
       <div>
         <?php if(auth()->check()): ?>
           <div class="inline-flex items-center gap-2 bg-brand/10 border border-brand/20 text-brand text-sm font-medium px-3 py-1 rounded-full mb-6">
@@ -20,12 +28,18 @@
           </div>
         <?php endif; ?>
 
+        <?php if($heroTitle): ?>
+        <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight mb-5 text-white">
+          <span class="text-transparent bg-clip-text gradient-brand"><?= e($heroTitle) ?></span>
+        </h1>
+        <?php else: ?>
         <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight mb-5 text-white">
           <?= t('home.welcome_to') ?><br>
           <span class="text-transparent bg-clip-text gradient-brand"><?= e(setting('site_name', APP_NAME)) ?></span>
         </h1>
+        <?php endif; ?>
         <p class="text-lg text-slate-400 mb-8 leading-relaxed">
-          <?= e(setting('site_description', 'Join our Minecraft community — discuss, play and have fun with other players.')) ?>
+          <?= e($heroSub ?: setting('site_description', 'Join our Minecraft community — discuss, play and have fun with other players.')) ?>
         </p>
         <div class="flex flex-wrap gap-3">
           <?php if(!auth()->check()): ?>
@@ -42,6 +56,7 @@
       </div>
 
       <!-- Server Status Card -->
+      <?php if($showServer): ?>
       <div>
         <?php if($serverIp && $serverStatus): ?>
         <div class="glass rounded-2xl p-6 glow-brand">
@@ -124,12 +139,13 @@
         </div>
         <?php endif; ?>
       </div>
+      <?php endif; // $showServer ?>
     </div>
   </div>
 </section>
 
 <!-- STATS BAR -->
-<?php if($serverIp && $serverStatus && $serverStatus['online']): ?>
+<?php if($showServer && $serverIp && $serverStatus && $serverStatus['online']): ?>
 <section class="border-y border-slate-800/50 bg-slate-900/30">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap gap-6 justify-center">
     <?php foreach([[t('home.members'),$totalUsers],[t('home.threads'),$totalThreads],[t('home.replies'),$totalPosts]] as [$label,$val]): ?>
@@ -144,10 +160,11 @@
 
 <!-- MAIN CONTENT -->
 <section class="max-w-7xl mx-auto px-4 sm:px-6 py-12">
-  <div class="grid lg:grid-cols-3 gap-8">
+  <div class="grid <?= ($showThreads && $showActivity) || ($showThreads && $showJoinCta) ? 'lg:grid-cols-3' : 'lg:grid-cols-1' ?> gap-8">
 
     <!-- Recent Threads -->
-    <div class="lg:col-span-2">
+    <?php if($showThreads): ?>
+    <div class="<?= ($showActivity || $showJoinCta) ? 'lg:col-span-2' : '' ?>">
       <div class="flex items-center justify-between mb-5">
         <h2 class="text-xl font-bold text-white"><?= t('home.recent_threads') ?></h2>
         <a href="<?= url('forum') ?>" class="text-sm text-brand hover:text-brand-light transition-colors"><?= t('home.see_all') ?></a>
@@ -178,11 +195,13 @@
         <?php endif; ?>
       </div>
     </div>
+    <?php endif; // $showThreads ?>
 
     <!-- Sidebar -->
+    <?php if($showJoinCta || $showActivity): ?>
     <div class="space-y-6">
       <!-- Join CTA -->
-      <?php if(!auth()->check()): ?>
+      <?php if($showJoinCta && !auth()->check()): ?>
       <div class="glass rounded-2xl p-6 border border-brand/20">
         <h3 class="font-bold text-white mb-2"><?= t('home.join_community') ?></h3>
         <p class="text-sm text-slate-400 mb-4"><?= t('home.join_community_desc') ?></p>
@@ -192,6 +211,7 @@
       <?php endif; ?>
 
       <!-- Recent Activity -->
+      <?php if($showActivity): ?>
       <div class="glass rounded-2xl p-5">
         <h3 class="font-semibold text-white mb-4"><?= t('home.recent_activity') ?></h3>
         <?php if(empty($recentPosts)): ?>
@@ -214,6 +234,8 @@
         </ul>
         <?php endif; ?>
       </div>
+      <?php endif; // $showActivity ?>
     </div>
+    <?php endif; // $showJoinCta || $showActivity ?>
   </div>
 </section>

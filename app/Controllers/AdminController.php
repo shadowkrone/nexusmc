@@ -8,6 +8,7 @@ use App\Models\ForumCategory;
 use App\Models\ForumThread;
 use App\Models\ForumPost;
 use App\Models\Setting;
+use App\Models\Page;
 
 class AdminController extends Controller {
     public function dashboard(): void {
@@ -187,12 +188,18 @@ class AdminController extends Controller {
         if (!csrf_verify()) { flash('error', t('flash.invalid_request')); redirect('admin/settings'); }
 
         $allowed = [
-            'site_name', 'site_description', 'site_logo', 'site_banner',
+            'site_name', 'site_description', 'site_logo', 'site_favicon',
             'server_ip', 'server_port', 'discord_url', 'store_url',
             'maintenance_mode', 'registration_open', 'theme', 'language',
+            'home_hero_title', 'home_hero_subtitle',
+            'home_show_server', 'home_show_threads', 'home_show_activity', 'home_show_join_cta',
+            'social_youtube', 'social_twitter', 'social_tiktok', 'social_instagram',
         ];
+        $booleans = ['maintenance_mode', 'registration_open', 'home_show_server', 'home_show_threads', 'home_show_activity', 'home_show_join_cta'];
         foreach ($allowed as $key) {
-            if (isset($_POST[$key])) {
+            if (in_array($key, $booleans)) {
+                Setting::set($key, isset($_POST[$key]) ? '1' : '0');
+            } elseif (isset($_POST[$key])) {
                 Setting::set($key, trim($_POST[$key]));
             }
         }
@@ -246,6 +253,79 @@ class AdminController extends Controller {
         $this->requireAdmin();
         $plugins = app()->plugins->getAll();
         $this->renderAdmin('plugins', compact('plugins'));
+    }
+
+    public function pages(): void {
+        $this->requireAdmin();
+        $pages = Page::all('sort_order ASC, id ASC');
+        $this->renderAdmin('pages', ['pages' => $pages, 'editing' => null, 'success' => flash('success'), 'error' => flash('error')]);
+    }
+
+    public function createPage(): void {
+        $this->requireAdmin();
+        if (!csrf_verify()) { flash('error', t('flash.invalid_request')); redirect('admin/pages'); }
+
+        $title   = trim($_POST['title'] ?? '');
+        $content = $_POST['content'] ?? '';
+        $nav     = isset($_POST['show_in_nav']) ? 1 : 0;
+        $order   = (int)($_POST['sort_order'] ?? 0);
+
+        if (!$title) { flash('error', t('flash.name_required')); redirect('admin/pages'); }
+
+        $slug = strtolower(trim(preg_replace('/[^a-z0-9]+/i', '-', $title), '-'));
+        if (Page::findBySlug($slug)) $slug .= '-' . time();
+
+        Page::create([
+            'title'       => $title,
+            'slug'        => $slug,
+            'content'     => $content,
+            'show_in_nav' => $nav,
+            'sort_order'  => $order,
+            'created_at'  => date('Y-m-d H:i:s'),
+            'updated_at'  => date('Y-m-d H:i:s'),
+        ]);
+
+        flash('success', t('flash.page_created'));
+        redirect('admin/pages');
+    }
+
+    public function editPage(int $id): void {
+        $this->requireAdmin();
+        $page = Page::find($id);
+        if (!$page) { flash('error', t('flash.not_found')); redirect('admin/pages'); }
+        $pages = Page::all('sort_order ASC, id ASC');
+        $this->renderAdmin('pages', ['pages' => $pages, 'editing' => $page, 'success' => flash('success'), 'error' => flash('error')]);
+    }
+
+    public function savePage(int $id): void {
+        $this->requireAdmin();
+        if (!csrf_verify()) { flash('error', t('flash.invalid_request')); redirect('admin/pages'); }
+
+        $title   = trim($_POST['title'] ?? '');
+        $content = $_POST['content'] ?? '';
+        $nav     = isset($_POST['show_in_nav']) ? 1 : 0;
+        $order   = (int)($_POST['sort_order'] ?? 0);
+
+        if (!$title) { flash('error', t('flash.name_required')); redirect('admin/pages/' . $id . '/edit'); }
+
+        Page::update([
+            'title'       => $title,
+            'content'     => $content,
+            'show_in_nav' => $nav,
+            'sort_order'  => $order,
+            'updated_at'  => date('Y-m-d H:i:s'),
+        ], $id);
+
+        flash('success', t('flash.page_saved'));
+        redirect('admin/pages');
+    }
+
+    public function deletePage(int $id): void {
+        $this->requireAdmin();
+        if (!csrf_verify()) { flash('error', t('flash.invalid_request')); redirect('admin/pages'); }
+        Page::delete($id);
+        flash('success', t('flash.page_deleted'));
+        redirect('admin/pages');
     }
 
     public function togglePlugin(string $name): void {

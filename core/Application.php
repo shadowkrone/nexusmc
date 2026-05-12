@@ -70,6 +70,16 @@ class Application {
         $r->get('/admin/updates/check',      'AdminController@checkUpdate');
         $r->post('/admin/updates/apply',     'AdminController@applyUpdate');
 
+        // Custom pages
+        $r->get('/page/{slug}', 'PageController@show');
+
+        // Admin — pages
+        $r->get('/admin/pages',                      'AdminController@pages');
+        $r->post('/admin/pages/create',              'AdminController@createPage');
+        $r->get('/admin/pages/{id}/edit',            'AdminController@editPage');
+        $r->post('/admin/pages/{id}/edit',           'AdminController@savePage');
+        $r->post('/admin/pages/{id}/delete',         'AdminController@deletePage');
+
         // API
         $r->get('/api/server',       'ApiController@serverStatus');
         $r->get('/api/online-users', 'ApiController@onlineUsers');

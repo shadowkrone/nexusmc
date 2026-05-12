@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?= e(setting('site_name', APP_NAME)) ?><?= isset($pageTitle) ? ' — ' . e($pageTitle) : '' ?></title>
 <meta name="description" content="<?= e(setting('site_description', 'Minecraft Community')) ?>">
+<?php if($favicon = setting('site_favicon')): ?>
+<link rel="icon" href="<?= e($favicon) ?>">
+<?php endif; ?>
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
 tailwind.config = {
@@ -67,10 +70,16 @@ tailwind.config = {
         <?php endif; ?>
         <?php if(setting('discord_url')): ?>
         <a href="<?= e(setting('discord_url')) ?>" target="_blank" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-colors flex items-center gap-1.5">
-          <svg class="w-4 h-4 text-indigo-400" fill="currentColor" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515..."/></svg>
+          <svg class="w-4 h-4 text-indigo-400" fill="currentColor" viewBox="0 0 24 24"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963a.075.075 0 0 0-.041-.104 13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028z"/></svg>
           Discord
         </a>
         <?php endif; ?>
+        <?php
+        try { $navPages = \App\Models\Page::allForNav(); } catch (\Throwable) { $navPages = []; }
+        foreach($navPages as $np_):
+        ?>
+        <a href="<?= url('page/' . $np_['slug']) ?>" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"><?= e($np_['title']) ?></a>
+        <?php endforeach; ?>
       </div>
 
       <!-- User Menu -->
@@ -130,6 +139,16 @@ tailwind.config = {
 </main>
 
 <!-- FOOTER -->
+<?php
+$socials = array_filter([
+    'discord'   => ['url' => setting('discord_url'),       'color' => 'text-indigo-400', 'path' => 'M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 0 0-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 0 0-5.487 0 12.36 12.36 0 0 0-.617-1.23A.077.077 0 0 0 8.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 0 0-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 0 0 .031.055 20.03 20.03 0 0 0 5.993 2.98.078.078 0 0 0 .084-.026c.462-.62.874-1.275 1.226-1.963a.075.075 0 0 0-.041-.104 13.201 13.201 0 0 1-1.872-.878.075.075 0 0 1-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 0 1 .078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 0 1 .079.009c.12.098.245.195.372.288a.075.075 0 0 1-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 0 0-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 0 0 .084.028 19.963 19.963 0 0 0 6.002-2.981.076.076 0 0 0 .032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 0 0-.031-.028z'],
+    'youtube'   => ['url' => setting('social_youtube'),    'color' => 'text-red-500',    'path' => 'M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z'],
+    'twitter'   => ['url' => setting('social_twitter'),    'color' => 'text-slate-300',  'path' => 'M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z'],
+    'tiktok'    => ['url' => setting('social_tiktok'),     'color' => 'text-slate-200',  'path' => 'M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V9.14a8.16 8.16 0 004.84 1.55V7.25a4.85 4.85 0 01-1.07-.56z'],
+    'instagram' => ['url' => setting('social_instagram'),  'color' => 'text-pink-400',   'path' => 'M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z'],
+]);
+try { $footerPages = \App\Models\Page::all('sort_order ASC, id ASC'); } catch (\Throwable) { $footerPages = []; }
+?>
 <footer class="border-t border-slate-800 mt-16">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 py-10">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -140,21 +159,34 @@ tailwind.config = {
           </div>
           <span class="font-bold text-white"><?= e($siteName) ?></span>
         </div>
-        <p class="text-sm text-slate-500"><?= e(setting('site_description', 'Minecraft Community')) ?></p>
+        <p class="text-sm text-slate-500 mb-4"><?= e(setting('site_description', 'Minecraft Community')) ?></p>
+        <?php if($socials): ?>
+        <div class="flex gap-3">
+          <?php foreach($socials as $social): ?>
+          <a href="<?= e($social['url']) ?>" target="_blank" rel="noopener"
+             class="w-8 h-8 bg-slate-800 hover:bg-slate-700 rounded-lg flex items-center justify-center transition-colors <?= $social['color'] ?>">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="<?= $social['path'] ?>"/></svg>
+          </a>
+          <?php endforeach; ?>
+        </div>
+        <?php endif; ?>
       </div>
       <div>
         <h4 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3"><?= t('footer.links') ?></h4>
         <ul class="space-y-2 text-sm text-slate-500">
           <li><a href="<?= url() ?>" class="hover:text-brand transition-colors"><?= t('nav.home') ?></a></li>
           <li><a href="<?= url('forum') ?>" class="hover:text-brand transition-colors"><?= t('nav.forum') ?></a></li>
-          <?php if(setting('discord_url')): ?>
-          <li><a href="<?= e(setting('discord_url')) ?>" class="hover:text-brand transition-colors">Discord</a></li>
+          <?php foreach($footerPages as $fp_): ?>
+          <li><a href="<?= url('page/' . $fp_['slug']) ?>" class="hover:text-brand transition-colors"><?= e($fp_['title']) ?></a></li>
+          <?php endforeach; ?>
+          <?php if(setting('store_url')): ?>
+          <li><a href="<?= e(setting('store_url')) ?>" target="_blank" class="hover:text-brand transition-colors"><?= t('nav.shop') ?></a></li>
           <?php endif; ?>
         </ul>
       </div>
       <div>
         <h4 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3"><?= t('footer.powered_by') ?></h4>
-        <p class="text-sm text-slate-600">NexusMC v<?= APP_VERSION ?> — <a href="https://github.com" class="hover:text-brand transition-colors">Open Source</a></p>
+        <p class="text-sm text-slate-600">NexusMC v<?= APP_VERSION ?> — <a href="https://github.com/shadowkrone/nexusmc" target="_blank" class="hover:text-brand transition-colors">Open Source</a></p>
       </div>
     </div>
   </div>

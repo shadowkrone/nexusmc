@@ -71,6 +71,19 @@ CREATE TABLE IF NOT EXISTS `{PREFIX}forum_posts` (
   CONSTRAINT `fk_post_user`   FOREIGN KEY (`user_id`)   REFERENCES `{PREFIX}users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS `{PREFIX}pages` (
+  `id`          INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `title`       VARCHAR(150) NOT NULL,
+  `slug`        VARCHAR(150) NOT NULL,
+  `content`     LONGTEXT NOT NULL,
+  `show_in_nav` TINYINT(1) NOT NULL DEFAULT 0,
+  `sort_order`  SMALLINT NOT NULL DEFAULT 0,
+  `created_at`  DATETIME NOT NULL,
+  `updated_at`  DATETIME NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `slug` (`slug`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Default settings
 INSERT IGNORE INTO `{PREFIX}settings` (`key`, `value`) VALUES
   ('site_name', 'NexusMC'),
@@ -81,6 +94,17 @@ INSERT IGNORE INTO `{PREFIX}settings` (`key`, `value`) VALUES
   ('server_port', '25565'),
   ('discord_url', ''),
   ('store_url', ''),
-  ('enabled_plugins', '[]');
+  ('enabled_plugins', '[]'),
+  ('home_hero_title', ''),
+  ('home_hero_subtitle', ''),
+  ('home_show_server', '1'),
+  ('home_show_threads', '1'),
+  ('home_show_activity', '1'),
+  ('home_show_join_cta', '1'),
+  ('social_youtube', ''),
+  ('social_twitter', ''),
+  ('social_tiktok', ''),
+  ('social_instagram', ''),
+  ('site_favicon', '');
 
 SET FOREIGN_KEY_CHECKS = 1;
