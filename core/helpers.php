@@ -61,12 +61,27 @@ function csrf_verify(): bool {
     return hash_equals(csrf(), $token);
 }
 
+function t(string $key, array $params = []): string {
+    static $strings = null;
+    if ($strings === null) {
+        try { $lang = setting('language', 'en'); } catch (\Throwable) { $lang = 'en'; }
+        $file = ROOT . "/lang/{$lang}.php";
+        if (!file_exists($file)) $file = ROOT . '/lang/en.php';
+        $strings = file_exists($file) ? (require $file) : [];
+    }
+    $str = $strings[$key] ?? $key;
+    foreach ($params as $k => $v) {
+        $str = str_replace(':' . $k, (string)$v, $str);
+    }
+    return $str;
+}
+
 function timeAgo(string $datetime): string {
     $diff = time() - strtotime($datetime);
-    if ($diff < 60)      return 'lige nu';
-    if ($diff < 3600)    return round($diff / 60) . ' min. siden';
-    if ($diff < 86400)   return round($diff / 3600) . ' t. siden';
-    if ($diff < 604800)  return round($diff / 86400) . ' dage siden';
+    if ($diff < 60)      return t('time.just_now');
+    if ($diff < 3600)    return t('time.minutes_ago', ['n' => (string)round($diff / 60)]);
+    if ($diff < 86400)   return t('time.hours_ago',   ['n' => (string)round($diff / 3600)]);
+    if ($diff < 604800)  return t('time.days_ago',    ['n' => (string)round($diff / 86400)]);
     return date('d/m/Y', strtotime($datetime));
 }
 

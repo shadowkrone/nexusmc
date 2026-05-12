@@ -1,5 +1,5 @@
 <div class="max-w-6xl">
-  <h1 class="text-2xl font-bold text-white mb-7">Dashboard</h1>
+  <h1 class="text-2xl font-bold text-white mb-7"><?= t('admin.dashboard.title') ?></h1>
 
   <!-- Stats -->
   <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
@@ -9,7 +9,7 @@
       </div>
       <div>
         <p class="text-3xl font-extrabold text-white"><?= number_format($stats['users']) ?></p>
-        <p class="text-sm text-slate-400">Brugere</p>
+        <p class="text-sm text-slate-400"><?= t('admin.dashboard.users') ?></p>
       </div>
     </div>
     <div class="glass rounded-2xl p-6 flex items-center gap-4">
@@ -18,7 +18,7 @@
       </div>
       <div>
         <p class="text-3xl font-extrabold text-white"><?= number_format($stats['threads']) ?></p>
-        <p class="text-sm text-slate-400">Tråde</p>
+        <p class="text-sm text-slate-400"><?= t('admin.dashboard.threads') ?></p>
       </div>
     </div>
     <div class="glass rounded-2xl p-6 flex items-center gap-4">
@@ -27,7 +27,7 @@
       </div>
       <div>
         <p class="text-3xl font-extrabold text-white"><?= number_format($stats['posts']) ?></p>
-        <p class="text-sm text-slate-400">Indlæg</p>
+        <p class="text-sm text-slate-400"><?= t('admin.dashboard.posts') ?></p>
       </div>
     </div>
   </div>
@@ -35,8 +35,8 @@
   <!-- Recent users -->
   <div class="glass rounded-2xl overflow-hidden">
     <div class="px-5 py-4 border-b border-slate-800 flex items-center justify-between">
-      <h2 class="font-semibold text-white">Nye brugere</h2>
-      <a href="<?= url('admin/users') ?>" class="text-sm text-brand hover:text-brand-light">Se alle →</a>
+      <h2 class="font-semibold text-white"><?= t('admin.dashboard.new_users') ?></h2>
+      <a href="<?= url('admin/users') ?>" class="text-sm text-brand hover:text-brand-light"><?= t('admin.dashboard.see_all') ?></a>
     </div>
     <div class="divide-y divide-slate-800/50">
       <?php foreach($recentUsers as $u): ?>

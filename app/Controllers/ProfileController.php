@@ -40,60 +40,60 @@ class ProfileController extends Controller {
 
     public function saveUsername(): void {
         $this->requireAuth();
-        if (!csrf_verify()) { flash('error', 'Ugyldig forespørgsel.'); redirect('settings?tab=profile'); }
+        if (!csrf_verify()) { flash('error', t('flash.invalid_request')); redirect('settings?tab=profile'); }
 
         $user     = auth()->user();
         $username = trim($_POST['username'] ?? '');
 
         if (!$username) {
-            flash('error', 'Brugernavn må ikke være tomt.'); redirect('settings?tab=profile');
+            flash('error', t('flash.username_empty')); redirect('settings?tab=profile');
         }
         if (strlen($username) < 3 || strlen($username) > 30) {
-            flash('error', 'Brugernavn skal være 3–30 tegn.'); redirect('settings?tab=profile');
+            flash('error', t('flash.username_length')); redirect('settings?tab=profile');
         }
         if (preg_match('/[^a-zA-Z0-9_\-]/', $username)) {
-            flash('error', 'Brugernavn må kun indeholde bogstaver, tal, _ og -.'); redirect('settings?tab=profile');
+            flash('error', t('flash.username_chars')); redirect('settings?tab=profile');
         }
         if (strtolower($username) !== strtolower($user['username'])) {
             $taken = User::findByUsername($username);
-            if ($taken) { flash('error', 'Brugernavnet er allerede taget.'); redirect('settings?tab=profile'); }
+            if ($taken) { flash('error', t('flash.username_taken')); redirect('settings?tab=profile'); }
         }
 
         User::update(['username' => $username], $user['id']);
-        flash('success', 'Brugernavn opdateret til ' . $username . '!');
+        flash('success', t('flash.username_updated', ['name' => $username]));
         redirect('settings?tab=profile');
     }
 
     public function saveEmail(): void {
         $this->requireAuth();
-        if (!csrf_verify()) { flash('error', 'Ugyldig forespørgsel.'); redirect('settings?tab=security'); }
+        if (!csrf_verify()) { flash('error', t('flash.invalid_request')); redirect('settings?tab=security'); }
 
         $user     = auth()->user();
         $email    = strtolower(trim($_POST['email'] ?? ''));
         $password = $_POST['current_password'] ?? '';
 
         if (!$email) {
-            flash('error', 'Email må ikke være tomt.'); redirect('settings?tab=security');
+            flash('error', t('flash.email_empty')); redirect('settings?tab=security');
         }
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            flash('error', 'Ugyldig email-adresse.'); redirect('settings?tab=security');
+            flash('error', t('flash.invalid_email')); redirect('settings?tab=security');
         }
         if (!password_verify($password, $user['password'])) {
-            flash('error', 'Forkert adgangskode — indtast din nuværende adgangskode for at bekræfte.'); redirect('settings?tab=security');
+            flash('error', t('flash.wrong_password_confirm')); redirect('settings?tab=security');
         }
         if ($email !== $user['email']) {
             $taken = User::findByEmail($email);
-            if ($taken) { flash('error', 'Email er allerede i brug.'); redirect('settings?tab=security'); }
+            if ($taken) { flash('error', t('flash.email_taken')); redirect('settings?tab=security'); }
         }
 
         User::update(['email' => $email], $user['id']);
-        flash('success', 'Email opdateret!');
+        flash('success', t('flash.email_updated'));
         redirect('settings?tab=security');
     }
 
     public function savePassword(): void {
         $this->requireAuth();
-        if (!csrf_verify()) { flash('error', 'Ugyldig forespørgsel.'); redirect('settings?tab=security'); }
+        if (!csrf_verify()) { flash('error', t('flash.invalid_request')); redirect('settings?tab=security'); }
 
         $user        = auth()->user();
         $current     = $_POST['current_password'] ?? '';
@@ -101,42 +101,41 @@ class ProfileController extends Controller {
         $confirm     = $_POST['confirm_password'] ?? '';
 
         if (!password_verify($current, $user['password'])) {
-            flash('error', 'Nuværende adgangskode er forkert.'); redirect('settings?tab=security');
+            flash('error', t('flash.current_wrong')); redirect('settings?tab=security');
         }
         if (strlen($newPassword) < 8) {
-            flash('error', 'Ny adgangskode skal mindst være 8 tegn.'); redirect('settings?tab=security');
+            flash('error', t('flash.new_password_min')); redirect('settings?tab=security');
         }
         if ($newPassword !== $confirm) {
-            flash('error', 'De nye adgangskoder matcher ikke.'); redirect('settings?tab=security');
+            flash('error', t('flash.passwords_match')); redirect('settings?tab=security');
         }
 
         User::update(['password' => password_hash($newPassword, PASSWORD_BCRYPT)], $user['id']);
-        flash('success', 'Adgangskode ændret!');
+        flash('success', t('flash.password_changed'));
         redirect('settings?tab=security');
     }
 
     public function deleteAccount(): void {
         $this->requireAuth();
-        if (!csrf_verify()) { flash('error', 'Ugyldig forespørgsel.'); redirect('settings?tab=danger'); }
+        if (!csrf_verify()) { flash('error', t('flash.invalid_request')); redirect('settings?tab=danger'); }
 
         $user     = auth()->user();
         $password = $_POST['confirm_password'] ?? '';
         $confirm  = trim($_POST['confirm_text'] ?? '');
 
-        if (strtolower($confirm) !== 'slet min konto') {
-            flash('error', 'Skriv "slet min konto" for at bekræfte.'); redirect('settings?tab=danger');
+        if (strtolower($confirm) !== t('settings.danger_confirm_value')) {
+            flash('error', t('flash.type_confirm_text')); redirect('settings?tab=danger');
         }
         if (!password_verify($password, $user['password'])) {
-            flash('error', 'Forkert adgangskode.'); redirect('settings?tab=danger');
+            flash('error', t('flash.wrong_password')); redirect('settings?tab=danger');
         }
 
-        // Delete user data
         db()->delete(DB_PREFIX . 'forum_posts',   'user_id = ?', [$user['id']]);
         db()->delete(DB_PREFIX . 'forum_threads', 'user_id = ?', [$user['id']]);
         User::delete($user['id']);
 
         auth()->logout();
-        flash('success', 'Din konto er slettet. Farvel!');
+        flash('success', t('flash.account_deleted'));
         redirect('');
     }
 }

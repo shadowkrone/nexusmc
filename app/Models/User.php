@@ -33,9 +33,9 @@ class User extends Model {
 
     public static function roleLabel(string $role): string {
         return match($role) {
-            'admin'     => 'Administrator',
-            'moderator' => 'Moderator',
-            default     => 'Medlem',
+            'admin'     => t('role.admin'),
+            'moderator' => t('role.moderator'),
+            default     => t('role.member'),
         };
     }
 

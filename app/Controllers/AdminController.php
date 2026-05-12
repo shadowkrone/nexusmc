@@ -60,13 +60,13 @@ class AdminController extends Controller {
 
     public function changeRole(int $id): void {
         $this->requireAdmin();
-        if (!csrf_verify()) { $this->json(['error' => 'Invalid'], 403); }
+        if (!csrf_verify()) { $this->json(['error' => t('flash.invalid_request')], 403); }
         $role = $_POST['role'] ?? 'member';
         if (!in_array($role, ['member', 'moderator', 'admin'])) {
-            $this->json(['error' => 'Ugyldig rolle'], 400);
+            $this->json(['error' => t('admin.users.invalid_role')], 400);
         }
         if ($id === auth()->user()['id']) {
-            $this->json(['error' => 'Du kan ikke ændre din egen rolle'], 400);
+            $this->json(['error' => t('admin.users.cannot_change_own_role')], 400);
         }
         User::update(['role' => $role], $id);
         $this->json(['ok' => true, 'role' => $role]);
@@ -75,18 +75,17 @@ class AdminController extends Controller {
     public function getUser(int $id): void {
         $this->requireAdmin();
         $user = User::find($id);
-        if (!$user) { $this->json(['error' => 'Bruger ikke fundet'], 404); }
-        // Never expose password hash
+        if (!$user) { $this->json(['error' => t('admin.users.not_found')], 404); }
         unset($user['password']);
         $this->json(['ok' => true, 'user' => $user]);
     }
 
     public function updateUser(int $id): void {
         $this->requireAdmin();
-        if (!csrf_verify()) { $this->json(['error' => 'Ugyldig forespørgsel.'], 403); }
+        if (!csrf_verify()) { $this->json(['error' => t('flash.invalid_request')], 403); }
 
         $user = User::find($id);
-        if (!$user) { $this->json(['error' => 'Bruger ikke fundet.'], 404); }
+        if (!$user) { $this->json(['error' => t('admin.users.not_found')], 404); }
 
         $data     = [];
         $errors   = [];
@@ -95,34 +94,31 @@ class AdminController extends Controller {
         $email    = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
 
-        // Validate username
         if ($username && $username !== $user['username']) {
             if (strlen($username) < 3 || strlen($username) > 30) {
-                $errors[] = 'Brugernavn skal være 3–30 tegn.';
+                $errors[] = t('flash.username_length');
             } elseif (preg_match('/[^a-zA-Z0-9_\-]/', $username)) {
-                $errors[] = 'Brugernavn må kun indeholde bogstaver, tal, _ og -.';
+                $errors[] = t('flash.username_chars');
             } else {
                 $taken = db()->fetch('SELECT id FROM ' . DB_PREFIX . 'users WHERE username = ? AND id != ?', [$username, $id]);
-                if ($taken) $errors[] = 'Brugernavnet er allerede i brug.';
+                if ($taken) $errors[] = t('flash.username_taken');
                 else $data['username'] = $username;
             }
         }
 
-        // Validate email
         if ($email && $email !== $user['email']) {
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                $errors[] = 'Ugyldig email-adresse.';
+                $errors[] = t('flash.invalid_email');
             } else {
                 $taken = db()->fetch('SELECT id FROM ' . DB_PREFIX . 'users WHERE email = ? AND id != ?', [strtolower($email), $id]);
-                if ($taken) $errors[] = 'Email er allerede i brug.';
+                if ($taken) $errors[] = t('flash.email_taken');
                 else $data['email'] = strtolower($email);
             }
         }
 
-        // Password (optional)
         if ($password !== '') {
             if (strlen($password) < 8) {
-                $errors[] = 'Adgangskode skal mindst være 8 tegn.';
+                $errors[] = t('flash.new_password_min');
             } else {
                 $data['password'] = password_hash($password, PASSWORD_BCRYPT);
             }
@@ -149,14 +145,14 @@ class AdminController extends Controller {
 
     public function createCategory(): void {
         $this->requireAdmin();
-        if (!csrf_verify()) { flash('error', 'Ugyldig forespørgsel.'); redirect('admin/forum'); }
+        if (!csrf_verify()) { flash('error', t('flash.invalid_request')); redirect('admin/forum'); }
 
         $name  = trim($_POST['name'] ?? '');
         $desc  = trim($_POST['description'] ?? '');
         $icon  = trim($_POST['icon'] ?? '💬');
         $color = trim($_POST['color'] ?? '#10b981');
 
-        if (!$name) { flash('error', 'Navn er påkrævet.'); redirect('admin/forum'); }
+        if (!$name) { flash('error', t('flash.name_required')); redirect('admin/forum'); }
 
         $slug = strtolower(preg_replace('/[^a-z0-9]+/i', '-', $name));
         ForumCategory::create([
@@ -169,14 +165,14 @@ class AdminController extends Controller {
             'created_at'  => date('Y-m-d H:i:s'),
         ]);
 
-        flash('success', 'Kategori oprettet!');
+        flash('success', t('flash.category_created'));
         redirect('admin/forum');
     }
 
     public function deleteCategory(int $id): void {
         $this->requireAdmin();
         ForumCategory::delete($id);
-        flash('success', 'Kategori slettet.');
+        flash('success', t('flash.category_deleted'));
         redirect('admin/forum');
     }
 
@@ -188,12 +184,12 @@ class AdminController extends Controller {
 
     public function saveSettings(): void {
         $this->requireAdmin();
-        if (!csrf_verify()) { flash('error', 'Ugyldig forespørgsel.'); redirect('admin/settings'); }
+        if (!csrf_verify()) { flash('error', t('flash.invalid_request')); redirect('admin/settings'); }
 
         $allowed = [
             'site_name', 'site_description', 'site_logo', 'site_banner',
             'server_ip', 'server_port', 'discord_url', 'store_url',
-            'maintenance_mode', 'registration_open', 'theme',
+            'maintenance_mode', 'registration_open', 'theme', 'language',
         ];
         foreach ($allowed as $key) {
             if (isset($_POST[$key])) {
@@ -201,7 +197,7 @@ class AdminController extends Controller {
             }
         }
 
-        flash('success', 'Indstillinger gemt!');
+        flash('success', t('flash.settings_saved'));
         redirect('admin/settings');
     }
 
@@ -217,7 +213,7 @@ class AdminController extends Controller {
         $updater = new \Core\Updater();
         $release = $updater->getLatestRelease(\Core\Updater::REPO);
         if (!$release) {
-            $this->json(['ok' => false, 'message' => 'Kunne ikke hente release-info fra GitHub. Tjek at repo-navnet er korrekt.']);
+            $this->json(['ok' => false, 'message' => t('admin.updates.fetch_error')]);
         }
         $this->json([
             'ok'         => true,
@@ -234,11 +230,11 @@ class AdminController extends Controller {
 
     public function applyUpdate(): void {
         $this->requireAdmin();
-        if (!csrf_verify()) { $this->json(['ok' => false, 'message' => 'Ugyldig forespørgsel.'], 403); }
+        if (!csrf_verify()) { $this->json(['ok' => false, 'message' => t('flash.invalid_request')], 403); }
 
         $zipUrl = trim($_POST['zip_url'] ?? '');
         if (!$zipUrl || !str_starts_with($zipUrl, 'https://')) {
-            $this->json(['ok' => false, 'message' => 'Ugyldig download-URL.']);
+            $this->json(['ok' => false, 'message' => t('admin.updates.invalid_url')]);
         }
 
         $updater = new \Core\Updater();
@@ -254,15 +250,15 @@ class AdminController extends Controller {
 
     public function togglePlugin(string $name): void {
         $this->requireAdmin();
-        if (!csrf_verify()) { flash('error', 'Ugyldig forespørgsel.'); redirect('admin/plugins'); }
+        if (!csrf_verify()) { flash('error', t('flash.invalid_request')); redirect('admin/plugins'); }
 
         $enabled = app()->plugins->getEnabled();
         if (in_array($name, $enabled)) {
             $enabled = array_values(array_diff($enabled, [$name]));
-            $msg = "Plugin '{$name}' deaktiveret.";
+            $msg = t('flash.plugin_disabled', ['name' => $name]);
         } else {
             $enabled[] = $name;
-            $msg = "Plugin '{$name}' aktiveret.";
+            $msg = t('flash.plugin_enabled', ['name' => $name]);
         }
         Setting::set('enabled_plugins', json_encode($enabled));
         flash('success', $msg);

@@ -17,7 +17,7 @@ function isOnline(string $lastSeen): bool {
         <div class="flex items-center gap-3">
           <img :src="`https://mc-heads.net/avatar/${currentUsername}/32`" class="w-8 h-8 rounded-lg" alt="">
           <div>
-            <h3 class="font-semibold text-white">Rediger bruger</h3>
+            <h3 class="font-semibold text-white"><?= t('admin.users.edit_user') ?></h3>
             <p class="text-xs text-slate-500" x-text="'#' + userId"></p>
           </div>
         </div>
@@ -50,7 +50,7 @@ function isOnline(string $lastSeen): bool {
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-slate-300 mb-1.5">Brugernavn</label>
+          <label class="block text-sm font-medium text-slate-300 mb-1.5"><?= t('admin.users.username') ?></label>
           <div class="relative">
             <input type="text" x-model="form.username" minlength="3" maxlength="30"
                    class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 pr-10 text-white placeholder-slate-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/30 transition-colors">
@@ -59,20 +59,20 @@ function isOnline(string $lastSeen): bool {
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-slate-300 mb-1.5">Email</label>
+          <label class="block text-sm font-medium text-slate-300 mb-1.5"><?= t('admin.users.email') ?></label>
           <input type="email" x-model="form.email"
                  class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/30 transition-colors">
         </div>
 
         <div>
           <label class="block text-sm font-medium text-slate-300 mb-1.5">
-            Ny adgangskode
-            <span class="text-slate-600 font-normal">(lad stå tom for ingen ændring)</span>
+            <?= t('admin.users.new_password') ?>
+            <span class="text-slate-600 font-normal"><?= t('admin.users.new_password_hint') ?></span>
           </label>
           <div class="relative" x-data="{showPw: false}">
             <input :type="showPw ? 'text' : 'password'" x-model="form.password" minlength="8"
                    class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 pr-10 text-white placeholder-slate-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/30 transition-colors"
-                   placeholder="Min. 8 tegn">
+                   placeholder="<?= t('admin.users.min_8_chars') ?>">
             <button type="button" @click="showPw = !showPw" class="absolute right-3 top-2.5 text-slate-500 hover:text-slate-300">
               <svg x-show="!showPw" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
               <svg x-show="showPw" x-cloak class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
@@ -81,44 +81,44 @@ function isOnline(string $lastSeen): bool {
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-slate-300 mb-1.5">Rolle</label>
+          <label class="block text-sm font-medium text-slate-300 mb-1.5"><?= t('admin.users.role') ?></label>
           <select x-model="form.role"
                   class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/30 transition-colors">
-            <option value="member">Medlem</option>
-            <option value="moderator">Moderator</option>
-            <option value="admin">Administrator</option>
+            <option value="member"><?= t('admin.users.member') ?></option>
+            <option value="moderator"><?= t('admin.users.moderator') ?></option>
+            <option value="admin"><?= t('admin.users.administrator') ?></option>
           </select>
         </div>
 
         <!-- Extra info (read-only) -->
         <div class="grid grid-cols-2 gap-3 pt-2 border-t border-slate-800">
           <div class="bg-slate-900/50 rounded-lg px-3 py-2">
-            <p class="text-xs text-slate-500 mb-0.5">Oprettet</p>
+            <p class="text-xs text-slate-500 mb-0.5"><?= t('admin.users.created') ?></p>
             <p class="text-sm text-slate-300" x-text="joinDate"></p>
           </div>
           <div class="bg-slate-900/50 rounded-lg px-3 py-2">
-            <p class="text-xs text-slate-500 mb-0.5">Sidst set</p>
+            <p class="text-xs text-slate-500 mb-0.5"><?= t('admin.users.last_seen') ?></p>
             <p class="text-sm text-slate-300" x-text="lastSeen"></p>
           </div>
           <div class="bg-slate-900/50 rounded-lg px-3 py-2">
-            <p class="text-xs text-slate-500 mb-0.5">Indlæg</p>
+            <p class="text-xs text-slate-500 mb-0.5"><?= t('admin.users.posts') ?></p>
             <p class="text-sm font-semibold text-white" x-text="postCount"></p>
           </div>
           <div class="bg-slate-900/50 rounded-lg px-3 py-2">
-            <p class="text-xs text-slate-500 mb-0.5">Status</p>
-            <p class="text-sm font-semibold" :class="banned ? 'text-red-400' : 'text-emerald-400'" x-text="banned ? 'Banned' : 'Aktiv'"></p>
+            <p class="text-xs text-slate-500 mb-0.5"><?= t('admin.users.status') ?></p>
+            <p class="text-sm font-semibold" :class="banned ? 'text-red-400' : 'text-emerald-400'" x-text="banned ? 'Banned' : '<?= t('admin.users.active') ?>'"></p>
           </div>
         </div>
 
         <div class="flex gap-3 pt-2">
           <button type="button" @click="close()"
                   class="flex-1 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium rounded-lg transition-colors">
-            Annuller
+            <?= t('admin.users.cancel') ?>
           </button>
           <button type="submit" :disabled="saving"
                   class="flex-1 py-2.5 bg-brand hover:bg-brand-dark text-white font-semibold rounded-lg transition-colors disabled:opacity-60 flex items-center justify-center gap-2">
             <svg x-show="saving" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-            <span x-text="saving ? 'Gemmer…' : 'Gem ændringer'"></span>
+            <span x-text="saving ? '<?= t('admin.users.saving') ?>' : '<?= t('admin.users.save_changes') ?>'"></span>
           </button>
         </div>
       </form>
@@ -129,15 +129,15 @@ function isOnline(string $lastSeen): bool {
   <!-- Header -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-7">
     <div>
-      <h1 class="text-2xl font-bold text-white">Brugere
+      <h1 class="text-2xl font-bold text-white"><?= t('admin.users.title') ?>
         <span class="text-slate-500 text-lg font-normal">(<?= number_format($total) ?>)</span>
       </h1>
     </div>
     <!-- Search -->
     <form method="GET" action="" class="flex gap-2">
-      <input type="text" name="search" value="<?= e($search ?? '') ?>" placeholder="Søg efter navn eller email…"
+      <input type="text" name="search" value="<?= e($search ?? '') ?>" placeholder="<?= t('admin.users.search_ph') ?>"
              class="bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand w-64 transition-colors">
-      <button type="submit" class="px-4 py-2 bg-brand hover:bg-brand-dark text-white text-sm font-medium rounded-lg transition-colors">Søg</button>
+      <button type="submit" class="px-4 py-2 bg-brand hover:bg-brand-dark text-white text-sm font-medium rounded-lg transition-colors"><?= t('admin.users.search_btn') ?></button>
       <?php if($search ?? ''): ?>
       <a href="<?= url('admin/users') ?>" class="px-3 py-2 bg-slate-700 hover:bg-slate-600 text-slate-300 text-sm rounded-lg transition-colors">✕</a>
       <?php endif; ?>
@@ -155,30 +155,30 @@ function isOnline(string $lastSeen): bool {
       <div class="w-8 h-8 bg-blue-500/15 rounded-lg flex items-center justify-center">
         <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
       </div>
-      <div><p class="text-lg font-bold text-white"><?= number_format($total) ?></p><p class="text-xs text-slate-500">Total</p></div>
+      <div><p class="text-lg font-bold text-white"><?= number_format($total) ?></p><p class="text-xs text-slate-500"><?= t('admin.users.total') ?></p></div>
     </div>
     <div class="glass rounded-xl px-4 py-3 flex items-center gap-3">
       <div class="w-8 h-8 bg-emerald-500/15 rounded-lg flex items-center justify-center">
         <span class="w-2 h-2 bg-emerald-400 rounded-full"></span>
       </div>
-      <div><p class="text-lg font-bold text-white"><?= number_format($onlineCount) ?></p><p class="text-xs text-slate-500">Online nu</p></div>
+      <div><p class="text-lg font-bold text-white"><?= number_format($onlineCount) ?></p><p class="text-xs text-slate-500"><?= t('admin.users.online_now') ?></p></div>
     </div>
     <div class="glass rounded-xl px-4 py-3 flex items-center gap-3">
       <div class="w-8 h-8 bg-red-500/15 rounded-lg flex items-center justify-center">
         <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
       </div>
-      <div><p class="text-lg font-bold text-white"><?= number_format($bannedCount) ?></p><p class="text-xs text-slate-500">Banned</p></div>
+      <div><p class="text-lg font-bold text-white"><?= number_format($bannedCount) ?></p><p class="text-xs text-slate-500"><?= t('admin.users.banned') ?></p></div>
     </div>
     <div class="glass rounded-xl px-4 py-3 flex items-center gap-3">
       <div class="w-8 h-8 bg-red-500/15 rounded-lg flex items-center justify-center">
         <svg class="w-4 h-4 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
       </div>
-      <div><p class="text-lg font-bold text-white"><?= number_format($adminCount) ?></p><p class="text-xs text-slate-500">Admins</p></div>
+      <div><p class="text-lg font-bold text-white"><?= number_format($adminCount) ?></p><p class="text-xs text-slate-500"><?= t('admin.users.admins') ?></p></div>
     </div>
   </div>
 
   <?php if(empty($users)): ?>
-  <div class="glass rounded-2xl p-10 text-center text-slate-500">Ingen brugere fundet.</div>
+  <div class="glass rounded-2xl p-10 text-center text-slate-500"><?= t('admin.users.not_found') ?></div>
   <?php else: ?>
 
   <!-- User cards -->
@@ -216,21 +216,21 @@ function isOnline(string $lastSeen): bool {
         <div class="hidden md:flex items-center gap-5 text-center flex-shrink-0">
           <div>
             <p class="text-sm font-bold text-white"><?= number_format((int)$u['post_count']) ?></p>
-            <p class="text-xs text-slate-600">Indlæg</p>
+            <p class="text-xs text-slate-600"><?= t('admin.users.posts') ?></p>
           </div>
           <div>
             <p class="text-sm font-bold text-white"><?= number_format((int)$u['thread_count']) ?></p>
-            <p class="text-xs text-slate-600">Tråde</p>
+            <p class="text-xs text-slate-600"><?= t('admin.users.threads') ?></p>
           </div>
           <div>
             <p class="text-xs font-medium <?= $online ? 'text-emerald-400' : 'text-slate-400' ?>">
-              <?= $online ? 'Online' : timeAgo($u['last_seen'] ?? $u['created_at']) ?>
+              <?= $online ? t('admin.users.active') : timeAgo($u['last_seen'] ?? $u['created_at']) ?>
             </p>
-            <p class="text-xs text-slate-600">Sidst set</p>
+            <p class="text-xs text-slate-600"><?= t('admin.users.last_seen') ?></p>
           </div>
           <div>
             <p class="text-xs text-slate-400"><?= date('d/m/Y', strtotime($u['created_at'])) ?></p>
-            <p class="text-xs text-slate-600">Oprettet</p>
+            <p class="text-xs text-slate-600"><?= t('admin.users.created') ?></p>
           </div>
         </div>
 
@@ -259,8 +259,8 @@ function isOnline(string $lastSeen): bool {
             </button>
             <div x-show="roleOpen" x-cloak @click.outside="roleOpen = false" x-transition
                  class="absolute right-0 mt-2 w-40 bg-slate-900 border border-slate-700 rounded-xl py-1 shadow-xl z-20">
-              <p class="text-xs text-slate-500 px-3 py-1.5 uppercase tracking-wider">Sæt rolle</p>
-              <?php foreach(['member' => 'Medlem', 'moderator' => 'Moderator', 'admin' => 'Administrator'] as $roleKey => $roleLabel): ?>
+              <p class="text-xs text-slate-500 px-3 py-1.5 uppercase tracking-wider"><?= t('admin.users.set_role') ?></p>
+              <?php foreach(['member' => t('admin.users.member'), 'moderator' => t('admin.users.moderator'), 'admin' => t('admin.users.administrator')] as $roleKey => $roleLabel): ?>
               <button onclick="changeRole(<?= $u['id'] ?>, '<?= $roleKey ?>')"
                       @click="roleOpen = false"
                       class="w-full text-left px-3 py-2 text-sm transition-colors <?= $u['role'] === $roleKey ? 'text-brand' : 'text-slate-300 hover:text-white hover:bg-slate-800' ?>">
@@ -274,15 +274,13 @@ function isOnline(string $lastSeen): bool {
           <!-- Ban / Unban -->
           <?php if($u['banned']): ?>
           <button onclick="setBan(<?= $u['id'] ?>, 0)"
-                  class="px-3 py-1.5 text-xs font-medium bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25 rounded-lg transition-colors border border-emerald-500/20"
-                  title="Ophæv ban">
-            Ophæv ban
+                  class="px-3 py-1.5 text-xs font-medium bg-emerald-500/15 text-emerald-400 hover:bg-emerald-500/25 rounded-lg transition-colors border border-emerald-500/20">
+            <?= t('admin.users.unban') ?>
           </button>
           <?php else: ?>
           <button onclick="setBan(<?= $u['id'] ?>, 1)"
-                  class="px-3 py-1.5 text-xs font-medium bg-red-500/15 text-red-400 hover:bg-red-500/25 rounded-lg transition-colors border border-red-500/20"
-                  title="Ban bruger">
-            Ban
+                  class="px-3 py-1.5 text-xs font-medium bg-red-500/15 text-red-400 hover:bg-red-500/25 rounded-lg transition-colors border border-red-500/20">
+            <?= t('admin.users.ban') ?>
           </button>
           <?php endif; ?>
 
@@ -346,8 +344,8 @@ function editModal() {
       this.form.role        = u.role;
       this.currentUsername  = u.username;
       this.banned           = !!u.banned;
-      this.joinDate         = u.created_at ? new Date(u.created_at).toLocaleDateString('da-DK') : '—';
-      this.lastSeen         = u.last_seen  ? new Date(u.last_seen).toLocaleDateString('da-DK')  : '—';
+      this.joinDate         = u.created_at ? new Date(u.created_at).toLocaleDateString('<?= t('admin.users.locale') ?>') : '—';
+      this.lastSeen         = u.last_seen  ? new Date(u.last_seen).toLocaleDateString('<?= t('admin.users.locale') ?>')  : '—';
       this.postCount        = u.post_count ?? '—';
     },
 
@@ -378,13 +376,13 @@ function editModal() {
       this.saving = false;
 
       if (!data.ok) {
-        this.errors = data.errors ?? [data.error ?? 'Ukendt fejl.'];
+        this.errors = data.errors ?? [data.error ?? '<?= t('admin.users.unknown_error') ?>'];
         return;
       }
 
       this.currentUsername = data.user.username;
       this.form.password   = '';
-      this.successMsg      = 'Ændringer gemt!';
+      this.successMsg      = '<?= t('admin.users.changes_saved') ?>';
 
       // Update the row in the table
       const row = document.getElementById(`user-row-${this.userId}`);
@@ -412,7 +410,7 @@ async function setBan(id, banned) {
     location.reload();
   } else {
     btn.disabled = false;
-    alert('Fejl — prøv igen.');
+    alert('<?= t('admin.users.error_retry') ?>');
   }
 }
 
@@ -427,7 +425,7 @@ async function changeRole(id, role) {
     location.reload();
   } else {
     const data = await res.json().catch(() => ({}));
-    alert(data.error ?? 'Fejl — prøv igen.');
+    alert(data.error ?? '<?= t('admin.users.error_retry') ?>');
   }
 }
 </script>

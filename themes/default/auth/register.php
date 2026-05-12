@@ -1,12 +1,12 @@
-<?php $pageTitle = 'Opret konto'; ?>
+<?php $pageTitle = t('auth.register'); ?>
 <div class="min-h-[80vh] flex items-center justify-center px-4 py-16">
   <div class="w-full max-w-md">
     <div class="text-center mb-8">
       <div class="w-16 h-16 gradient-brand rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl shadow-brand/20">
         <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
       </div>
-      <h1 class="text-3xl font-bold text-white">Opret konto</h1>
-      <p class="text-slate-400 mt-2">Gratis og tager kun et minut</p>
+      <h1 class="text-3xl font-bold text-white"><?= t('auth.register') ?></h1>
+      <p class="text-slate-400 mt-2"><?= t('auth.register_subtitle') ?></p>
     </div>
 
     <?php if($error ?? null): ?>
@@ -20,7 +20,7 @@
       <form method="POST" action="<?= url('register') ?>" class="space-y-5" x-data="{username:'',checking:false}">
         <?= csrf_field() ?>
         <div>
-          <label class="block text-sm font-medium text-slate-300 mb-1.5">Brugernavn</label>
+          <label class="block text-sm font-medium text-slate-300 mb-1.5"><?= t('auth.username') ?></label>
           <div class="relative">
             <input type="text" name="username" x-model="username" required minlength="3" maxlength="20"
                    class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 pr-10 text-white placeholder-slate-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/30 transition-colors"
@@ -29,35 +29,35 @@
               <img :src="`https://mc-heads.net/avatar/${username}/20`" class="w-5 h-5 rounded" alt="">
             </div>
           </div>
-          <p class="text-xs text-slate-600 mt-1">3–20 tegn. Dit Minecraft brugernavn for at vise din skin.</p>
+          <p class="text-xs text-slate-600 mt-1"><?= t('auth.username_hint') ?></p>
         </div>
         <div>
-          <label class="block text-sm font-medium text-slate-300 mb-1.5">Email</label>
+          <label class="block text-sm font-medium text-slate-300 mb-1.5"><?= t('auth.email') ?></label>
           <input type="email" name="email" required autocomplete="email"
                  class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/30 transition-colors"
-                 placeholder="din@email.dk">
+                 placeholder="<?= t('auth.email_ph') ?>">
         </div>
         <div>
-          <label class="block text-sm font-medium text-slate-300 mb-1.5">Adgangskode</label>
+          <label class="block text-sm font-medium text-slate-300 mb-1.5"><?= t('auth.password') ?></label>
           <input type="password" name="password" required minlength="8"
                  class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/30 transition-colors"
-                 placeholder="Min. 8 tegn">
+                 placeholder="<?= t('auth.min_8_chars') ?>">
         </div>
         <div>
-          <label class="block text-sm font-medium text-slate-300 mb-1.5">Bekræft adgangskode</label>
+          <label class="block text-sm font-medium text-slate-300 mb-1.5"><?= t('auth.confirm_password') ?></label>
           <input type="password" name="password2" required
                  class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/30 transition-colors"
                  placeholder="••••••••">
         </div>
         <button type="submit" class="w-full py-3 bg-brand hover:bg-brand-dark text-white font-semibold rounded-lg transition-colors shadow-lg shadow-brand/20">
-          Opret gratis konto
+          <?= t('auth.register_btn') ?>
         </button>
       </form>
     </div>
 
     <p class="text-center text-sm text-slate-500 mt-5">
-      Har du en konto?
-      <a href="<?= url('login') ?>" class="text-brand hover:text-brand-light font-medium transition-colors">Log ind her</a>
+      <?= t('auth.have_account') ?>
+      <a href="<?= url('login') ?>" class="text-brand hover:text-brand-light font-medium transition-colors"><?= t('auth.login_link') ?></a>
     </p>
   </div>
 </div>

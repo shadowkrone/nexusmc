@@ -10,12 +10,12 @@ class AuthController extends Controller {
     }
 
     public function login(): void {
-        if (!csrf_verify()) { flash('error', 'Ugyldig forespørgsel.'); redirect('login'); }
+        if (!csrf_verify()) { flash('error', t('flash.invalid_request')); redirect('login'); }
         $email    = trim($_POST['email'] ?? '');
         $password = $_POST['password'] ?? '';
 
         if (!$email || !$password) {
-            flash('error', 'Udfyld alle felter.');
+            flash('error', t('flash.fill_all_fields'));
             redirect('login');
         }
 
@@ -24,7 +24,7 @@ class AuthController extends Controller {
             redirect($next ?: '');
         }
 
-        flash('error', 'Forkert email eller adgangskode.');
+        flash('error', t('flash.wrong_credentials'));
         redirect('login');
     }
 
@@ -34,7 +34,7 @@ class AuthController extends Controller {
     }
 
     public function register(): void {
-        if (!csrf_verify()) { flash('error', 'Ugyldig forespørgsel.'); redirect('register'); }
+        if (!csrf_verify()) { flash('error', t('flash.invalid_request')); redirect('register'); }
 
         $username  = trim($_POST['username'] ?? '');
         $email     = trim($_POST['email'] ?? '');
@@ -42,29 +42,29 @@ class AuthController extends Controller {
         $password2 = $_POST['password2'] ?? '';
 
         if (!$username || !$email || !$password) {
-            flash('error', 'Udfyld alle felter.'); redirect('register');
+            flash('error', t('flash.fill_all_fields')); redirect('register');
         }
         if (strlen($username) < 3 || strlen($username) > 20) {
-            flash('error', 'Brugernavn skal være 3–20 tegn.'); redirect('register');
+            flash('error', t('flash.username_length_20')); redirect('register');
         }
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            flash('error', 'Ugyldig email.'); redirect('register');
+            flash('error', t('flash.invalid_email')); redirect('register');
         }
         if (strlen($password) < 8) {
-            flash('error', 'Adgangskode skal mindst være 8 tegn.'); redirect('register');
+            flash('error', t('flash.password_min_8')); redirect('register');
         }
         if ($password !== $password2) {
-            flash('error', 'Adgangskoderne matcher ikke.'); redirect('register');
+            flash('error', t('flash.passwords_no_match')); redirect('register');
         }
 
         $id = auth()->register($username, $email, $password);
         if (!$id) {
-            flash('error', 'Email eller brugernavn er allerede i brug.'); redirect('register');
+            flash('error', t('flash.email_or_username_taken')); redirect('register');
         }
 
         $user = \App\Models\User::find($id);
         auth()->login($user);
-        flash('success', 'Velkommen, ' . e($username) . '! Din konto er oprettet.');
+        flash('success', t('flash.welcome', ['name' => e($username)]));
         redirect('');
     }
 
@@ -74,8 +74,7 @@ class AuthController extends Controller {
     }
 
     public function verify(string $token): void {
-        // Email verification — placeholder
-        flash('success', 'Konto verificeret!');
+        flash('success', t('flash.account_verified'));
         redirect('login');
     }
 }

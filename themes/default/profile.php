@@ -13,11 +13,11 @@
               <?= \App\Models\User::roleLabel($user['role']) ?>
             </span>
           </div>
-          <p class="text-sm text-slate-400 mt-0.5">Medlem siden <?= date('d/m/Y', strtotime($user['created_at'])) ?></p>
+          <p class="text-sm text-slate-400 mt-0.5"><?= t('profile.member_since') ?> <?= date('d/m/Y', strtotime($user['created_at'])) ?></p>
         </div>
         <?php if(auth()->check() && auth()->user()['username'] === $user['username']): ?>
         <a href="<?= url('settings') ?>" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm font-medium rounded-lg transition-colors">
-          Rediger profil
+          <?= t('profile.edit_profile') ?>
         </a>
         <?php endif; ?>
       </div>
@@ -26,15 +26,15 @@
       <div class="grid grid-cols-3 gap-4 mb-6">
         <div class="bg-slate-900/50 rounded-xl p-4 text-center">
           <p class="text-2xl font-bold text-white"><?= number_format($threadCount) ?></p>
-          <p class="text-xs text-slate-500 mt-0.5">Tråde</p>
+          <p class="text-xs text-slate-500 mt-0.5"><?= t('profile.threads') ?></p>
         </div>
         <div class="bg-slate-900/50 rounded-xl p-4 text-center">
           <p class="text-2xl font-bold text-white"><?= number_format($postCount) ?></p>
-          <p class="text-xs text-slate-500 mt-0.5">Svar</p>
+          <p class="text-xs text-slate-500 mt-0.5"><?= t('profile.replies') ?></p>
         </div>
         <div class="bg-slate-900/50 rounded-xl p-4 text-center">
           <p class="text-sm font-semibold text-white"><?= timeAgo($user['last_seen']) ?></p>
-          <p class="text-xs text-slate-500 mt-0.5">Sidst set</p>
+          <p class="text-xs text-slate-500 mt-0.5"><?= t('profile.last_seen') ?></p>
         </div>
       </div>
     </div>

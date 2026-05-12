@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="da" class="dark">
+<html lang="<?= setting('language', 'en') ?>" class="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -60,10 +60,10 @@ tailwind.config = {
 
       <!-- Desktop Nav -->
       <div class="hidden md:flex items-center gap-1">
-        <a href="<?= url() ?>" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">Hjem</a>
-        <a href="<?= url('forum') ?>" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">Forum</a>
+        <a href="<?= url() ?>" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"><?= t('nav.home') ?></a>
+        <a href="<?= url('forum') ?>" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"><?= t('nav.forum') ?></a>
         <?php if(setting('store_url')): ?>
-        <a href="<?= e(setting('store_url')) ?>" target="_blank" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-colors">Shop</a>
+        <a href="<?= e(setting('store_url')) ?>" target="_blank" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"><?= t('nav.shop') ?></a>
         <?php endif; ?>
         <?php if(setting('discord_url')): ?>
         <a href="<?= e(setting('discord_url')) ?>" target="_blank" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-colors flex items-center gap-1.5">
@@ -86,29 +86,29 @@ tailwind.config = {
                  class="absolute right-0 mt-2 w-48 glass rounded-xl py-1 shadow-xl border border-slate-700">
               <a href="<?= url('user/' . urlencode($u['username'])) ?>" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-                Min profil
+                <?= t('nav.my_profile') ?>
               </a>
               <a href="<?= url('settings') ?>" class="flex items-center gap-2 px-4 py-2 text-sm text-slate-300 hover:text-white hover:bg-slate-800">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
-                Indstillinger
+                <?= t('nav.settings') ?>
               </a>
               <?php if(auth()->isAdmin()): ?>
               <div class="border-t border-slate-700 my-1"></div>
               <a href="<?= url('admin') ?>" class="flex items-center gap-2 px-4 py-2 text-sm text-brand hover:bg-slate-800">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                Admin panel
+                <?= t('nav.admin_panel') ?>
               </a>
               <?php endif; ?>
               <div class="border-t border-slate-700 my-1"></div>
               <a href="<?= url('logout') ?>" class="flex items-center gap-2 px-4 py-2 text-sm text-red-400 hover:bg-slate-800">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
-                Log ud
+                <?= t('nav.logout') ?>
               </a>
             </div>
           </div>
         <?php else: ?>
-          <a href="<?= url('login') ?>" class="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors">Log ind</a>
-          <a href="<?= url('register') ?>" class="px-4 py-2 text-sm font-semibold bg-brand hover:bg-brand-dark text-white rounded-lg transition-colors shadow-lg">Registrer</a>
+          <a href="<?= url('login') ?>" class="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white transition-colors"><?= t('nav.login') ?></a>
+          <a href="<?= url('register') ?>" class="px-4 py-2 text-sm font-semibold bg-brand hover:bg-brand-dark text-white rounded-lg transition-colors shadow-lg"><?= t('nav.register') ?></a>
         <?php endif; ?>
       </div>
     </div>
@@ -143,17 +143,17 @@ tailwind.config = {
         <p class="text-sm text-slate-500"><?= e(setting('site_description', 'Minecraft Community')) ?></p>
       </div>
       <div>
-        <h4 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Links</h4>
+        <h4 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3"><?= t('footer.links') ?></h4>
         <ul class="space-y-2 text-sm text-slate-500">
-          <li><a href="<?= url() ?>" class="hover:text-brand transition-colors">Hjem</a></li>
-          <li><a href="<?= url('forum') ?>" class="hover:text-brand transition-colors">Forum</a></li>
+          <li><a href="<?= url() ?>" class="hover:text-brand transition-colors"><?= t('nav.home') ?></a></li>
+          <li><a href="<?= url('forum') ?>" class="hover:text-brand transition-colors"><?= t('nav.forum') ?></a></li>
           <?php if(setting('discord_url')): ?>
           <li><a href="<?= e(setting('discord_url')) ?>" class="hover:text-brand transition-colors">Discord</a></li>
           <?php endif; ?>
         </ul>
       </div>
       <div>
-        <h4 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Powered by</h4>
+        <h4 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3"><?= t('footer.powered_by') ?></h4>
         <p class="text-sm text-slate-600">NexusMC v<?= APP_VERSION ?> — <a href="https://github.com" class="hover:text-brand transition-colors">Open Source</a></p>
       </div>
     </div>

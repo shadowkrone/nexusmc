@@ -2,22 +2,22 @@
 
   <div class="flex items-center justify-between mb-7">
     <div>
-      <h1 class="text-2xl font-bold text-white">Opdateringer</h1>
-      <p class="text-sm text-slate-400 mt-1">Nuværende version: <span class="text-white font-mono font-semibold">v<?= APP_VERSION ?></span></p>
+      <h1 class="text-2xl font-bold text-white"><?= t('admin.updates.title') ?></h1>
+      <p class="text-sm text-slate-400 mt-1"><?= t('admin.updates.current_version') ?> <span class="text-white font-mono font-semibold">v<?= APP_VERSION ?></span></p>
     </div>
     <button @click="check()" :disabled="checking"
             class="flex items-center gap-2 px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-sm rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
       <svg class="w-4 h-4" :class="{'animate-spin': checking}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
       </svg>
-      <span x-text="checking ? 'Tjekker…' : 'Tjek for opdateringer'"></span>
+      <span x-text="checking ? '<?= t('admin.updates.checking') ?>' : '<?= t('admin.updates.check_btn') ?>'"></span>
     </button>
   </div>
 
   <!-- Repo info -->
   <div class="glass rounded-xl px-4 py-3 mb-4 flex items-center gap-3 text-sm text-slate-400">
     <svg class="w-4 h-4 text-slate-500 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-    <span>Opdateringer hentes fra <a href="https://github.com/<?= \Core\Updater::REPO ?>" target="_blank" class="text-brand hover:underline font-medium"><?= \Core\Updater::REPO ?></a></span>
+    <span><?= t('admin.updates.updates_from') ?> <a href="https://github.com/<?= \Core\Updater::REPO ?>" target="_blank" class="text-brand hover:underline font-medium"><?= \Core\Updater::REPO ?></a></span>
   </div>
 
   <?php if(!$canWrite): ?>
@@ -27,8 +27,8 @@
       <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
     </div>
     <div>
-      <p class="font-semibold text-white mb-1">Manglende skrivetilladelse</p>
-      <p class="text-sm text-slate-400">PHP-processen har ikke tilladelse til at skrive til filerne. Kør dette på serveren:</p>
+      <p class="font-semibold text-white mb-1"><?= t('admin.updates.no_write') ?></p>
+      <p class="text-sm text-slate-400"><?= t('admin.updates.no_write_desc') ?></p>
       <code class="block mt-2 bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-sm text-brand font-mono">chmod -R 755 /var/www/nolifegroup.com/public_html/</code>
     </div>
   </div>
@@ -41,10 +41,10 @@
       <svg class="w-5 h-5 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
     </div>
     <div class="flex-1">
-      <p class="font-semibold text-white">Installeret version</p>
+      <p class="font-semibold text-white"><?= t('admin.updates.installed') ?></p>
       <p class="text-sm text-slate-400">NexusMC v<?= APP_VERSION ?></p>
     </div>
-    <span class="text-xs bg-brand/15 text-brand border border-brand/25 px-3 py-1 rounded-full font-medium">Aktuel</span>
+    <span class="text-xs bg-brand/15 text-brand border border-brand/25 px-3 py-1 rounded-full font-medium"><?= t('admin.updates.current_badge') ?></span>
   </div>
 
   <!-- Error state -->
@@ -58,8 +58,8 @@
     <div class="w-12 h-12 bg-emerald-500/15 rounded-full flex items-center justify-center mx-auto mb-3">
       <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
     </div>
-    <p class="font-semibold text-white mb-1">Du har den nyeste version</p>
-    <p class="text-sm text-slate-400">NexusMC v<?= APP_VERSION ?> er den seneste release.</p>
+    <p class="font-semibold text-white mb-1"><?= t('admin.updates.up_to_date') ?></p>
+    <p class="text-sm text-slate-400"><?= t('admin.updates.up_to_date_desc', ['version' => APP_VERSION]) ?></p>
   </div>
 
   <!-- Update available -->
@@ -70,33 +70,33 @@
           <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
         </div>
         <div>
-          <p class="font-semibold text-white">Opdatering tilgængelig!</p>
+          <p class="font-semibold text-white"><?= t('admin.updates.available') ?></p>
           <p class="text-xs text-slate-400">v<?= APP_VERSION ?> → <span class="text-brand font-semibold" x-text="'v' + latestVersion"></span></p>
         </div>
       </div>
-      <a :href="releaseUrl" target="_blank" class="text-xs text-slate-400 hover:text-brand transition-colors">Se på GitHub →</a>
+      <a :href="releaseUrl" target="_blank" class="text-xs text-slate-400 hover:text-brand transition-colors"><?= t('admin.updates.see_on_github') ?></a>
     </div>
 
     <!-- Changelog -->
     <div class="p-5">
-      <h3 class="text-sm font-semibold text-slate-300 mb-3">Hvad er nyt — <span x-text="releaseName"></span></h3>
+      <h3 class="text-sm font-semibold text-slate-300 mb-3"><?= t('admin.updates.whats_new') ?> <span x-text="releaseName"></span></h3>
       <div class="bg-slate-900/60 rounded-xl p-4 max-h-64 overflow-y-auto">
-        <pre class="text-xs text-slate-400 whitespace-pre-wrap font-mono leading-relaxed" x-text="changelog || 'Ingen changelog tilgængelig.'"></pre>
+        <pre class="text-xs text-slate-400 whitespace-pre-wrap font-mono leading-relaxed" x-text="changelog || '<?= t('admin.updates.no_changelog') ?>'"></pre>
       </div>
-      <p class="text-xs text-slate-600 mt-2">Udgivet <span x-text="published"></span></p>
+      <p class="text-xs text-slate-600 mt-2"><?= t('admin.updates.released') ?> <span x-text="published"></span></p>
     </div>
 
     <!-- Update button -->
     <div class="px-5 pb-5">
       <div x-show="!updating && !updateDone" class="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 mb-4 text-xs text-amber-400">
-        ⚠️ <strong>Backup:</strong> En kopi af <code class="bg-slate-800 px-1 rounded">config/config.php</code> gemmes automatisk i <code class="bg-slate-800 px-1 rounded">/storage/backups/</code> inden opdatering. Din <code class="bg-slate-800 px-1 rounded">/plugins/</code> mappe røres ikke.
+        <?= t('admin.updates.backup_notice') ?>
       </div>
 
       <!-- Progress -->
       <div x-show="updating" x-cloak class="flex items-center gap-3 mb-4 bg-slate-900/50 rounded-xl p-4">
         <svg class="w-5 h-5 text-brand animate-spin flex-shrink-0" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
         <div>
-          <p class="text-sm font-medium text-white">Opdaterer…</p>
+          <p class="text-sm font-medium text-white"><?= t('admin.updates.updating') ?></p>
           <p class="text-xs text-slate-500" x-text="updateStatus"></p>
         </div>
       </div>
@@ -111,13 +111,13 @@
               @click="applyUpdate()"
               class="w-full py-3 bg-brand hover:bg-brand-dark text-white font-semibold rounded-xl transition-colors shadow-lg shadow-brand/20 flex items-center justify-center gap-2">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-        Opdater til v<span x-text="latestVersion"></span> nu
+        <?= str_replace(':version', '</span><span x-text="latestVersion"></span><span>', t('admin.updates.update_btn', ['version' => ':version'])) ?>
       </button>
 
       <button x-show="updateDone" x-cloak
               onclick="location.reload()"
               class="w-full py-3 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-xl transition-colors">
-        Genindlæs side
+        <?= t('admin.updates.reload') ?>
       </button>
     </div>
   </div>
@@ -140,7 +140,7 @@ function updater() {
     releaseUrl:    '',
     published:     '',
     zipUrl:        '',
-    updateStatus:  'Downloader filer…',
+    updateStatus:  '<?= t('admin.updates.downloading') ?>',
     updateMessage: '',
 
     async check() {
@@ -164,21 +164,22 @@ function updater() {
           this.releaseUrl    = data.html_url;
           this.zipUrl        = data.zip_url;
           this.published     = data.published
-            ? new Date(data.published).toLocaleDateString('da-DK', {day:'numeric',month:'long',year:'numeric'})
+            ? new Date(data.published).toLocaleDateString('<?= t('admin.updates.locale') ?>', {day:'numeric',month:'long',year:'numeric'})
             : '';
         }
       } catch (e) {
-        this.error = 'Netværksfejl — tjek din internetforbindelse.';
+        this.error = '<?= t('admin.updates.network_error') ?>';
       }
 
       this.checking = false;
     },
 
     async applyUpdate() {
-      if (!confirm(`Vil du opdatere NexusMC til v${this.latestVersion}?\n\nDin config og plugins bevares. En backup oprettes automatisk.`)) return;
+      const confirmMsg = '<?= e(t('admin.updates.confirm', ['version' => ':version'])) ?>'.replace(':version', this.latestVersion);
+      if (!confirm(confirmMsg)) return;
 
       this.updating     = true;
-      this.updateStatus = 'Downloader og udpakker filer fra GitHub…';
+      this.updateStatus = '<?= t('admin.updates.downloading') ?>';
 
       try {
         const res  = await fetch('<?= url('admin/updates/apply') ?>', {
@@ -197,7 +198,7 @@ function updater() {
         }
       } catch (e) {
         this.updating = false;
-        this.error    = 'Netværksfejl under opdatering.';
+        this.error    = '<?= t('admin.updates.network_error_apply') ?>';
       }
     }
   }

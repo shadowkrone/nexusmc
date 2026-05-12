@@ -3,7 +3,7 @@
 
   <!-- Breadcrumb -->
   <nav class="flex items-center gap-2 text-sm text-slate-500 mb-6 flex-wrap">
-    <a href="<?= url('forum') ?>" class="hover:text-brand transition-colors">Forum</a>
+    <a href="<?= url('forum') ?>" class="hover:text-brand transition-colors"><?= t('forum.title') ?></a>
     <span>›</span>
     <a href="<?= url('forum/category/' . urlencode($category['slug'])) ?>" class="hover:text-brand transition-colors"><?= e($category['name']) ?></a>
     <span>›</span>
@@ -13,13 +13,13 @@
   <!-- Thread header -->
   <div class="mb-8">
     <div class="flex items-start gap-3 flex-wrap">
-      <?php if($thread['pinned']): ?><span class="text-sm bg-amber-500/20 text-amber-400 border border-amber-500/25 px-2 py-0.5 rounded-lg">📌 Fast</span><?php endif; ?>
-      <?php if($thread['locked']): ?><span class="text-sm bg-slate-700 text-slate-400 px-2 py-0.5 rounded-lg">🔒 Låst</span><?php endif; ?>
+      <?php if($thread['pinned']): ?><span class="text-sm bg-amber-500/20 text-amber-400 border border-amber-500/25 px-2 py-0.5 rounded-lg"><?= t('forum.pinned') ?></span><?php endif; ?>
+      <?php if($thread['locked']): ?><span class="text-sm bg-slate-700 text-slate-400 px-2 py-0.5 rounded-lg"><?= t('forum.locked') ?></span><?php endif; ?>
     </div>
     <h1 class="text-2xl sm:text-3xl font-bold text-white mt-2"><?= e($thread['title']) ?></h1>
     <div class="flex items-center gap-4 mt-3 text-sm text-slate-500">
-      <span><?= $total + 1 ?> indlæg</span>
-      <span><?= number_format($thread['views']) ?> visninger</span>
+      <span><?= t('forum.posts_count', ['n' => $total + 1]) ?></span>
+      <span><?= t('forum.views_count', ['n' => number_format($thread['views'])]) ?></span>
     </div>
   </div>
 
@@ -35,7 +35,7 @@
           <span class="mt-1 text-xs px-2 py-0.5 rounded-full <?= \App\Models\User::roleBadgeClass($thread['role']) ?>">
             <?= \App\Models\User::roleLabel($thread['role']) ?>
           </span>
-          <p class="text-xs text-slate-600 mt-2 text-center">Medlem siden<br><?= date('M Y', strtotime($thread['user_joined'])) ?></p>
+          <p class="text-xs text-slate-600 mt-2 text-center"><?= t('forum.member_since') ?><br><?= date('M Y', strtotime($thread['user_joined'])) ?></p>
         </div>
         <!-- Content -->
         <div class="flex-1 p-5 min-w-0">
@@ -54,7 +54,7 @@
               <button onclick="document.getElementById('reply-form').scrollIntoView({behavior:'smooth'})"
                       class="text-xs text-slate-500 hover:text-brand transition-colors flex items-center gap-1">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
-                Svar
+                <?= t('forum.reply_btn') ?>
               </button>
               <?php endif; ?>
             </div>
@@ -73,7 +73,7 @@
           <span class="mt-1 text-xs px-2 py-0.5 rounded-full <?= \App\Models\User::roleBadgeClass($post['role']) ?>">
             <?= \App\Models\User::roleLabel($post['role']) ?>
           </span>
-          <p class="text-xs text-slate-600 mt-2 text-center"><?= number_format($post['user_post_count']) ?> indlæg</p>
+          <p class="text-xs text-slate-600 mt-2 text-center"><?= number_format($post['user_post_count']) ?> <?= t('forum.posts_label') ?></p>
         </div>
         <div class="flex-1 p-5 min-w-0">
           <div class="flex items-center justify-between mb-4 sm:hidden">
@@ -90,7 +90,7 @@
             <button onclick="document.getElementById('reply-form').scrollIntoView({behavior:'smooth'})"
                     class="text-xs text-slate-500 hover:text-brand transition-colors flex items-center gap-1">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
-              Svar
+              <?= t('forum.reply_btn') ?>
             </button>
             <?php endif; ?>
           </div>
@@ -114,27 +114,27 @@
   <!-- Reply form -->
   <?php if(auth()->check() && !$thread['locked']): ?>
   <div id="reply-form" class="mt-8 glass rounded-2xl p-6">
-    <h3 class="font-semibold text-white mb-4">Skriv et svar</h3>
+    <h3 class="font-semibold text-white mb-4"><?= t('forum.write_reply') ?></h3>
     <form method="POST" action="<?= url('forum/thread/' . $thread['id'] . '/reply') ?>">
       <?= csrf_field() ?>
       <textarea name="body" rows="5" required
                 class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/30 transition-colors resize-none"
-                placeholder="Skriv dit svar her..."></textarea>
+                placeholder="<?= t('forum.reply_ph') ?>"></textarea>
       <div class="flex justify-end mt-3">
         <button type="submit" class="px-6 py-2.5 bg-brand hover:bg-brand-dark text-white font-semibold rounded-lg transition-colors">
-          Send svar
+          <?= t('forum.send_reply') ?>
         </button>
       </div>
     </form>
   </div>
   <?php elseif(!auth()->check()): ?>
   <div id="bottom" class="mt-8 glass rounded-2xl p-6 text-center">
-    <p class="text-slate-400 mb-3">Log ind for at svare på denne tråd.</p>
-    <a href="<?= url('login') ?>" class="inline-block px-5 py-2 bg-brand hover:bg-brand-dark text-white font-semibold rounded-lg transition-colors">Log ind</a>
+    <p class="text-slate-400 mb-3"><?= t('forum.login_to_reply') ?></p>
+    <a href="<?= url('login') ?>" class="inline-block px-5 py-2 bg-brand hover:bg-brand-dark text-white font-semibold rounded-lg transition-colors"><?= t('forum.login_btn') ?></a>
   </div>
   <?php elseif($thread['locked']): ?>
   <div class="mt-8 glass rounded-2xl p-5 text-center">
-    <p class="text-slate-500 text-sm">🔒 Denne tråd er låst og kan ikke besvares.</p>
+    <p class="text-slate-500 text-sm"><?= t('forum.locked_msg') ?></p>
   </div>
   <?php endif; ?>
 </div>

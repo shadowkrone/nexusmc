@@ -1,12 +1,12 @@
-<?php $pageTitle = 'Log ind'; ?>
+<?php $pageTitle = t('auth.login'); ?>
 <div class="min-h-[80vh] flex items-center justify-center px-4 py-16">
   <div class="w-full max-w-md">
     <div class="text-center mb-8">
       <div class="w-16 h-16 gradient-brand rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl shadow-brand/20">
         <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/></svg>
       </div>
-      <h1 class="text-3xl font-bold text-white">Log ind</h1>
-      <p class="text-slate-400 mt-2">Velkommen tilbage!</p>
+      <h1 class="text-3xl font-bold text-white"><?= t('auth.login') ?></h1>
+      <p class="text-slate-400 mt-2"><?= t('auth.welcome_back') ?></p>
     </div>
 
     <?php if($error ?? null): ?>
@@ -20,13 +20,13 @@
       <form method="POST" action="<?= url('login') ?>" class="space-y-5">
         <?= csrf_field() ?>
         <div>
-          <label class="block text-sm font-medium text-slate-300 mb-1.5">Email</label>
+          <label class="block text-sm font-medium text-slate-300 mb-1.5"><?= t('auth.email') ?></label>
           <input type="email" name="email" required autocomplete="email"
                  class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/30 transition-colors"
-                 placeholder="din@email.dk">
+                 placeholder="<?= t('auth.email_ph') ?>">
         </div>
         <div>
-          <label class="block text-sm font-medium text-slate-300 mb-1.5">Adgangskode</label>
+          <label class="block text-sm font-medium text-slate-300 mb-1.5"><?= t('auth.password') ?></label>
           <div class="relative" x-data="{show:false}">
             <input :type="show ? 'text' : 'password'" name="password" required autocomplete="current-password"
                    class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 pr-11 text-white placeholder-slate-500 focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand/30 transition-colors"
@@ -38,14 +38,14 @@
           </div>
         </div>
         <button type="submit" class="w-full py-3 bg-brand hover:bg-brand-dark text-white font-semibold rounded-lg transition-colors shadow-lg shadow-brand/20">
-          Log ind
+          <?= t('auth.login_btn') ?>
         </button>
       </form>
     </div>
 
     <p class="text-center text-sm text-slate-500 mt-5">
-      Ingen konto?
-      <a href="<?= url('register') ?>" class="text-brand hover:text-brand-light font-medium transition-colors">Opret dig her</a>
+      <?= t('auth.no_account') ?>
+      <a href="<?= url('register') ?>" class="text-brand hover:text-brand-light font-medium transition-colors"><?= t('auth.register_here') ?></a>
     </p>
   </div>
 </div>

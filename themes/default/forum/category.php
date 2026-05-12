@@ -3,7 +3,7 @@
 
   <!-- Breadcrumb -->
   <nav class="flex items-center gap-2 text-sm text-slate-500 mb-6">
-    <a href="<?= url('forum') ?>" class="hover:text-brand transition-colors">Forum</a>
+    <a href="<?= url('forum') ?>" class="hover:text-brand transition-colors"><?= t('forum.title') ?></a>
     <span>›</span>
     <span class="text-slate-300"><?= e($category['name']) ?></span>
   </nav>
@@ -25,61 +25,61 @@
     <a href="<?= url('forum/new/' . $category['id']) ?>"
        class="flex items-center gap-2 px-5 py-2.5 bg-brand hover:bg-brand-dark text-white font-semibold rounded-xl transition-colors shadow-lg shadow-brand/20">
       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-      Ny tråd
+      <?= t('forum.new_thread') ?>
     </a>
     <?php endif; ?>
   </div>
 
   <?php if(empty($threads)): ?>
   <div class="glass rounded-2xl p-12 text-center">
-    <p class="text-slate-400 mb-2">Ingen tråde i denne kategori endnu.</p>
+    <p class="text-slate-400 mb-2"><?= t('forum.no_threads') ?></p>
     <?php if(auth()->check()): ?>
-    <a href="<?= url('forum/new/' . $category['id']) ?>" class="text-sm text-brand hover:underline">Start den første tråd!</a>
+    <a href="<?= url('forum/new/' . $category['id']) ?>" class="text-sm text-brand hover:underline"><?= t('forum.start_first') ?></a>
     <?php else: ?>
-    <a href="<?= url('register') ?>" class="text-sm text-brand hover:underline">Registrer dig for at skrive</a>
+    <a href="<?= url('register') ?>" class="text-sm text-brand hover:underline"><?= t('forum.register_to_write') ?></a>
     <?php endif; ?>
   </div>
   <?php else: ?>
   <div class="glass rounded-2xl overflow-hidden">
     <!-- Table header -->
     <div class="grid grid-cols-12 gap-4 px-5 py-3 border-b border-slate-800 text-xs font-medium text-slate-500 uppercase tracking-wider">
-      <div class="col-span-7">Tråd</div>
-      <div class="col-span-2 text-center hidden sm:block">Svar</div>
-      <div class="col-span-2 text-center hidden sm:block">Visninger</div>
+      <div class="col-span-7"><?= t('forum.thread_col') ?></div>
+      <div class="col-span-2 text-center hidden sm:block"><?= t('forum.replies_col') ?></div>
+      <div class="col-span-2 text-center hidden sm:block"><?= t('forum.views_col') ?></div>
       <div class="col-span-1"></div>
     </div>
 
-    <?php foreach($threads as $t): ?>
-    <a href="<?= url('forum/thread/' . $t['id']) ?>"
+    <?php foreach($threads as $t_): ?>
+    <a href="<?= url('forum/thread/' . $t_['id']) ?>"
        class="grid grid-cols-12 gap-4 px-5 py-4 border-b border-slate-800/50 hover:bg-slate-800/30 transition-colors group items-center last:border-0">
 
       <div class="col-span-7 flex items-center gap-3">
-        <img src="<?= mcHead(e($t['username']), 36) ?>" class="w-9 h-9 rounded-lg flex-shrink-0" alt="">
+        <img src="<?= mcHead(e($t_['username']), 36) ?>" class="w-9 h-9 rounded-lg flex-shrink-0" alt="">
         <div class="min-w-0">
           <div class="flex items-center gap-2 flex-wrap">
-            <?php if($t['pinned']): ?>
-            <span class="text-xs bg-amber-500/20 text-amber-400 border border-amber-500/25 px-1.5 py-0.5 rounded font-medium">📌 Fast</span>
+            <?php if($t_['pinned']): ?>
+            <span class="text-xs bg-amber-500/20 text-amber-400 border border-amber-500/25 px-1.5 py-0.5 rounded font-medium"><?= t('forum.pinned') ?></span>
             <?php endif; ?>
-            <?php if($t['locked']): ?>
-            <span class="text-xs bg-slate-700 text-slate-400 px-1.5 py-0.5 rounded font-medium">🔒 Låst</span>
+            <?php if($t_['locked']): ?>
+            <span class="text-xs bg-slate-700 text-slate-400 px-1.5 py-0.5 rounded font-medium"><?= t('forum.locked') ?></span>
             <?php endif; ?>
-            <span class="font-semibold text-white group-hover:text-brand transition-colors truncate"><?= e($t['title']) ?></span>
+            <span class="font-semibold text-white group-hover:text-brand transition-colors truncate"><?= e($t_['title']) ?></span>
           </div>
           <p class="text-xs text-slate-500 mt-0.5">
-            af <span class="text-slate-400"><?= e($t['username']) ?></span>
-            · <?= timeAgo($t['created_at']) ?>
-            <?php if($t['last_reply_user'] && $t['last_reply_user'] !== $t['username']): ?>
-            · Svar: <span class="text-slate-400"><?= e($t['last_reply_user']) ?></span> <?= timeAgo($t['last_reply_at']) ?>
+            <?= t('forum.by') ?> <span class="text-slate-400"><?= e($t_['username']) ?></span>
+            · <?= timeAgo($t_['created_at']) ?>
+            <?php if($t_['last_reply_user'] && $t_['last_reply_user'] !== $t_['username']): ?>
+            · <?= t('forum.last_reply') ?> <span class="text-slate-400"><?= e($t_['last_reply_user']) ?></span> <?= timeAgo($t_['last_reply_at']) ?>
             <?php endif; ?>
           </p>
         </div>
       </div>
 
       <div class="col-span-2 text-center hidden sm:block">
-        <span class="text-white font-semibold"><?= number_format((int)$t['reply_count']) ?></span>
+        <span class="text-white font-semibold"><?= number_format((int)$t_['reply_count']) ?></span>
       </div>
       <div class="col-span-2 text-center hidden sm:block">
-        <span class="text-slate-400"><?= number_format((int)$t['views']) ?></span>
+        <span class="text-slate-400"><?= number_format((int)$t_['views']) ?></span>
       </div>
       <div class="col-span-3 sm:col-span-1 flex justify-end">
         <svg class="w-4 h-4 text-slate-600 group-hover:text-brand transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
